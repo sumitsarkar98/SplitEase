@@ -17,7 +17,7 @@ const CategoryTable = () => {
 
   return (
     <div className="overflow-x-auto h-100 bg-white">
-      <table className="w-full text-sm">
+      <table className="w-full text-xs md:text-sm">
         {/* ================= TABLE HEADER ================= */}
         <thead>
           <tr className="text-left text-slate-500 border-b border-slate-200 bg-slate-50">
@@ -38,7 +38,7 @@ const CategoryTable = () => {
               key={index}
               className="cursor-pointer group relative border-b border-slate-100 
               transition-all duration-300 ease-out 
-              hover:bg-green-50 hover:-translate-y-0.5 hover:shadow-sm"
+              hover:bg-slate-50"
             >
               {/* Category */}
               <td

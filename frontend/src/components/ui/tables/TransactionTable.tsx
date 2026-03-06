@@ -40,7 +40,7 @@ const TransactionTable = () => {
   return (
     <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-3 md:py-4 md:px-6">
       {/* Header */}
-      <div className="flex  sm:items-center sm:justify-between gap-3 my-4">
+      <div className="flex justify-between items-center gap-3 my-4">
         <h2 className="text-lg md:text-xl text-slate-600 hover:text-green-700 cursor-pointer font-semibold capitalize">
           Recent Transactions
         </h2>

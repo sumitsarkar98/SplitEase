@@ -4,11 +4,11 @@ import TransactionTableDetails from "../ui/tables/TransactionTableDetails";
 
 const Expenses = () => {
   return (
-    <div className="p-2 md:p-4 lg:p-8 space-y-5 bg-light min-h-screen">
+    <div className="md:p-4 lg:p-8 space-y-5 bg-light min-h-screen">
       {/* ================= PAGE DETAILS SECTION ================= */}
       <section className="flex items-start md:items-center md:justify-between">
         {/* page-info */}
-        <div>
+        <div className="px-2 md:p-0">
           <h1 className="text-2xl lg:text-3xl font-semibold text-slate-700 md:mb-2">
             Transactions
           </h1>
@@ -18,7 +18,7 @@ const Expenses = () => {
         </div>
 
         {/* cta-btn */}
-        <div className="flex justify-end bg-red">
+        <div className="hidden md:flex justify-end bg-red">
           <AddBtn name="Add Transaction" />
         </div>
       </section>

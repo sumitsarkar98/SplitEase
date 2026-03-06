@@ -1,56 +1,91 @@
-import { FiBell } from "react-icons/fi";
-
+import { FiBell, FiMenu, FiX } from "react-icons/fi";
 import { NavLink } from "react-router-dom";
+import { useState } from "react";
 
 const Header = () => {
+  const [open, setOpen] = useState(false);
+
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-slate-200 px-6 lg:px-8 py-4 flex items-center justify-between">
-      {/* ================= LEFT SECTION ================= */}
-      <div className="flex items-center gap-4">
+    <>
+      <header className="sticky top-0 z-50 bg-white border-b border-slate-200 px-6 lg:px-8 py-4 flex items-center justify-between">
+        {/* Logo */}
         <h1 className="text-xl font-semibold text-white tracking-tight">
-          <NavLink to="/home/dashboard">
-            Split
-            <span className="text-amber-300">Ease</span>
+          <NavLink to="/">
+            Split<span className="text-amber-500">Ease</span>
           </NavLink>
         </h1>
-      </div>
 
-      {/* ================= MIDDLE SECTION ================= */}
-      <div className="hidden md:flex items-center">
-        <NavLink
-          to="/home/dashboard"
-          className={({ isActive }) =>
-            isActive ? "text-white" : "text-green-600"
-          }
-        >
-          Dashboard
-        </NavLink>
-        <NavLink
-          to="/home/transactions"
-          className={({ isActive }) =>
-            isActive ? "text-white" : "text-amber-200"
-          }
-        >
-          Transactions
-        </NavLink>
-      </div>
+        {/* Right Section */}
+        <div className="flex items-center gap-5">
+          {/* Notification */}
+          <button className="relative text-white hover:text-primary-600 transition">
+            <FiBell size={20} />
+            <span className="absolute -top-1 -right-1 h-2 w-2 bg-amber-200 rounded-full"></span>
+          </button>
 
-      {/* ================= RIGHT SECTION ================= */}
-      <div className="flex items-center gap-5">
-        {/* Notification */}
-        <button className="relative text-white hover:text-primary-600 transition">
-          <FiBell size={20} />
-          <span className="absolute -top-1 -right-1 h-2 w-2 bg-red-500 rounded-full"></span>
-        </button>
-
-        {/* User Profile */}
-        <div className="flex items-center gap-3 cursor-pointer">
-          <span className="hidden sm:block text-sm font-medium text-white">
+          {/* Username */}
+          <NavLink
+            to="/home/dashboard"
+            className="hidden sm:block text-sm text-white hover:text-amber-200 transition"
+          >
             Sumit
-          </span>
+          </NavLink>
+
+          {/* Mobile Menu Button (RIGHT SIDE) */}
+          <button
+            onClick={() => setOpen(true)}
+            className="lg:hidden text-slate-700"
+          >
+            <FiMenu size={24} />
+          </button>
         </div>
-      </div>
-    </header>
+      </header>
+
+      {/* FULL SCREEN MOBILE MENU */}
+      {open && (
+        <div className="fixed inset-0 z-50 bg-[#148c68] lg:hidden">
+          {/* Top Bar */}
+          <div className="flex justify-end items-center p-6 text-white">
+            <button onClick={() => setOpen(false)}>
+              <FiX size={24} />
+            </button>
+          </div>
+
+          {/* Menu Links */}
+          <nav className="flex flex-col gap-6 p-6 text-lg font-light">
+            <NavLink
+              to="dashboard"
+              onClick={() => setOpen(false)}
+              className={({ isActive }) =>
+                isActive ? "text-amber-200" : "text-white"
+              }
+            >
+              Dashboard
+            </NavLink>
+
+            <NavLink
+              to="transactions"
+              onClick={() => setOpen(false)}
+              className={({ isActive }) =>
+                isActive ? "text-amber-200" : "text-white"
+              }
+            >
+              Transactions
+            </NavLink>
+
+            <NavLink
+              to="budgets"
+              onClick={() => setOpen(false)}
+              className={({ isActive }) =>
+                isActive ? "text-amber-200" : "text-white"
+              }
+            >
+              Budgets
+            </NavLink>
+          </nav>
+        </div>
+      )}
+    </>
   );
 };
 

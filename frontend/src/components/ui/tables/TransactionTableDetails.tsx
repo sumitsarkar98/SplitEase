@@ -136,9 +136,9 @@ const TransactionTableDetails = () => {
       : transactions.filter((txn) => txn.type === filterType);
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm px-4 py-8 md:px-6">
+    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm px-2 py-8 md:px-6">
       {/* HEADER */}
-      <div className="flex flex-col sm:flex-row sm:justify-between md:items-center gap-1 sm:gap-3 sm:mb-4">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-3 md:mb-4 px-4">
         <h2 className="text-lg md:text-xl text-slate-600 hover:text-green-700 cursor-pointer font-semibold capitalize">
           Transaction history
         </h2>
@@ -162,7 +162,7 @@ const TransactionTableDetails = () => {
 
       {/* TABLE */}
       <div className="overflow-x-auto">
-        <table className="w-full text-sm min-w-100">
+        <table className="w-full text-xs lg:text-base min-w-100">
           <thead className="border-b text-slate-500">
             <tr>
               <th className="py-3 px-2 w-10 text-left ">

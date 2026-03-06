@@ -46,9 +46,9 @@ const BarCharts = () => {
 
           <Legend />
 
-          <Bar dataKey="income" fill="#22c55e" radius={[6, 6, 0, 0]} />
+          <Bar dataKey="income" fill="#16a34a" radius={[6, 6, 0, 0]} />
 
-          <Bar dataKey="expense" fill="#ef4444" radius={[6, 6, 0, 0]} />
+          <Bar dataKey="expense" fill="#dc2626" radius={[6, 6, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
     </div>

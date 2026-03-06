@@ -22,7 +22,7 @@ const Home = () => {
               `${baseStyle} ${
                 isActive
                   ? "bg-green-50 text-green-700 shadow-sm"
-                  : "text-slate-600 hover:bg-slate-100 hover:text-slate-800"
+                  : "text-slate-600 hover:bg-green-100 hover:text-slate-800"
               }`
             }
           >
@@ -37,7 +37,7 @@ const Home = () => {
               `${baseStyle} ${
                 isActive
                   ? "bg-green-50 text-green-700 shadow-sm"
-                  : "text-slate-600 hover:bg-slate-100 hover:text-slate-800"
+                  : "text-slate-600 hover:bg-green-100 hover:text-green-800"
               }`
             }
           >
@@ -52,7 +52,7 @@ const Home = () => {
               `${baseStyle} ${
                 isActive
                   ? "bg-green-50 text-green-700 shadow-sm"
-                  : "text-slate-600 hover:bg-slate-100 hover:text-slate-800"
+                  : "text-slate-600 hover:bg-green-100 hover:text-green-800"
               }`
             }
           >
