@@ -27,11 +27,12 @@ const Budget = () => {
           Monthly Budgets
         </h2>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4">
           <BudgetProgress name="Travel" spent={1200} target={3000} />
           <BudgetProgress name="EMI" spent={1200} target={4000} />
           <BudgetProgress name="Food" spent={1800} target={5000} />
           <BudgetProgress name="Shopping" spent={3000} target={3000} />
+          <BudgetProgress name="Food" spent={1800} target={5000} />
         </div>
       </section>
 
@@ -41,7 +42,7 @@ const Budget = () => {
           Financial Goals
         </h2>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4">
           <BudgetProgress name="Stock Market" spent={1200} target={30000} />
           <BudgetProgress name="New House" spent={1800} target={50000} />
           <BudgetProgress name="New Car" spent={3000} target={30000} />

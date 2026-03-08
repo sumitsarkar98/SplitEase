@@ -11,7 +11,7 @@ const Header = () => {
         {/* Logo */}
         <h1 className="text-xl font-semibold text-white tracking-tight">
           <NavLink to="/">
-            Split<span className="text-amber-500">Ease</span>
+            Split<span className="text-amber-300">Ease</span>
           </NavLink>
         </h1>
 

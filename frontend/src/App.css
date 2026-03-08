@@ -59,6 +59,9 @@ header {
   background-color: var(--base-color);
 }
 
+/* #hero {
+  background-image: url("./assets/herocover.webp");
+} */
 /* {================= CARD SCALE ON HOVER =================} */
 .card-hover {
   transition:
