@@ -5,7 +5,10 @@ const Footer = () => {
     "text-sm transition-colors duration-200 hover:text-amber-200";
 
   return (
-    <footer className="mt-10" style={{ background: "var(--base-color)" }}>
+    <footer
+      className="mt-10 lg:ml-60"
+      style={{ background: "var(--base-color)" }}
+    >
       <div className="max-w-7xl mx-auto px-6 lg:px-8 py-10">
         {/* Top */}
         <div className="flex flex-col md:flex-row justify-between gap-12">

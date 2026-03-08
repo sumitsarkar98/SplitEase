@@ -1,3 +1,4 @@
+import type { BarchartDataType } from "../../../types/DataTypes";
 import {
   ResponsiveContainer,
   BarChart,
@@ -9,17 +10,11 @@ import {
   Legend,
 } from "recharts";
 
-// Monthly finance data
-const data = [
-  { month: "Jan", income: 50000, expense: 32000 },
-  { month: "Feb", income: 42000, expense: 28000 },
-  { month: "Mar", income: 46000, expense: 31000 },
-  { month: "Apr", income: 52000, expense: 35000 },
-  { month: "May", income: 48000, expense: 30000 },
-  { month: "Jun", income: 55000, expense: 37000 },
-];
+interface BarchartProps {
+  data: BarchartDataType[];
+}
 
-const BarCharts = () => {
+const BarCharts = ({ data }: BarchartProps) => {
   return (
     <div className="w-full h-100">
       <ResponsiveContainer width="100%" height="100%">

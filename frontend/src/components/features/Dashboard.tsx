@@ -1,4 +1,5 @@
 import { NavLink } from "react-router-dom";
+
 import OverviewCard from "../ui/cards/OverviewCard";
 import CategoryTable from "../ui/tables/CategoryTable";
 import TransactionTable from "../ui/tables/TransactionTable";
@@ -6,6 +7,55 @@ import BarCharts from "../ui/charts/BarCharts";
 
 import { FaArrowRightLong } from "react-icons/fa6";
 import { useState } from "react";
+
+import type { BarchartDataType, CategoryDataType } from "../../types/DataTypes";
+import type { TransactionDataType } from "../../types/DataTypes";
+
+//  Mock Data (to be replaced with API data)
+const categoryData: CategoryDataType[] = [
+  { category: "electic Bill", amount: 8200, percentage: 32 },
+  { category: "Food", amount: 8200, percentage: 32 },
+  { category: "Travel", amount: 5400, percentage: 21 },
+  { category: "Shopping", amount: 4300, percentage: 17 },
+  { category: "Bills", amount: 3100, percentage: 12 },
+  { category: "Entertainment", amount: 2500, percentage: 10 },
+  { category: "Entertainment", amount: 2500, percentage: 10 },
+  { category: "Others", amount: 1800, percentage: 8 },
+];
+const transactions: TransactionDataType[] = [
+  {
+    id: 1,
+    date: "12 Mar 2026",
+    category: "Food",
+    description: "Lunch",
+    amount: 250,
+    type: "expense",
+  },
+  {
+    id: 2,
+    date: "11 Mar 2026",
+    category: "Salary",
+    description: "March Salary",
+    amount: 50000,
+    type: "income",
+  },
+  {
+    id: 3,
+    date: "10 Mar 2026",
+    category: "Travel",
+    description: "Metro",
+    amount: 120,
+    type: "expense",
+  },
+];
+const BarData: BarchartDataType[] = [
+  { month: "Jan", income: 50000, expense: 32000 },
+  { month: "Feb", income: 42000, expense: 28000 },
+  { month: "Mar", income: 46000, expense: 31000 },
+  { month: "Apr", income: 52000, expense: 35000 },
+  { month: "May", income: 48000, expense: 30000 },
+  { month: "Jun", income: 55000, expense: 37000 },
+];
 
 const Dashboard = () => {
   const [chartType, setChartType] = useState<"monthly" | "yearly" | "overall">(
@@ -78,7 +128,7 @@ const Dashboard = () => {
           </div>
 
           {/* table */}
-          <CategoryTable />
+          <CategoryTable categoryData={categoryData} />
         </div>
 
         {/* Chart */}
@@ -87,13 +137,13 @@ const Dashboard = () => {
             {chartType} Cash Flow
           </h2>
 
-          <BarCharts />
+          <BarCharts data={BarData} />
         </div>
       </section>
 
       {/* ===== TRANSACTIONS ===== */}
       <section>
-        <TransactionTable />
+        <TransactionTable transactions={transactions} />
       </section>
     </div>
   );

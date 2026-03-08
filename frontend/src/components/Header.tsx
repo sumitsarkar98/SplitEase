@@ -54,7 +54,7 @@ const Header = () => {
           {/* Menu Links */}
           <nav className="flex flex-col gap-6 p-6 text-lg font-light">
             <NavLink
-              to="dashboard"
+              to="/home/dashboard"
               onClick={() => setOpen(false)}
               className={({ isActive }) =>
                 isActive ? "text-amber-200" : "text-white"
@@ -64,7 +64,7 @@ const Header = () => {
             </NavLink>
 
             <NavLink
-              to="transactions"
+              to="/home/transactions"
               onClick={() => setOpen(false)}
               className={({ isActive }) =>
                 isActive ? "text-amber-200" : "text-white"
@@ -74,7 +74,7 @@ const Header = () => {
             </NavLink>
 
             <NavLink
-              to="budgets"
+              to="/home/budgets"
               onClick={() => setOpen(false)}
               className={({ isActive }) =>
                 isActive ? "text-amber-200" : "text-white"

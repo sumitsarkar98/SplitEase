@@ -1,42 +1,12 @@
+import type { TransactionDataType } from "../../../types/DataTypes";
+
 import AddBtn from "../buttons/AddBtn";
 
-interface Transaction {
-  id: number;
-  date: string;
-  category: string;
-  description: string;
-  amount: number;
-  type: "income" | "expense";
+interface TransactionTableProps {
+  transactions: TransactionDataType[];
 }
 
-const transactions: Transaction[] = [
-  {
-    id: 1,
-    date: "12 Mar 2026",
-    category: "Food",
-    description: "Lunch",
-    amount: 250,
-    type: "expense",
-  },
-  {
-    id: 2,
-    date: "11 Mar 2026",
-    category: "Salary",
-    description: "March Salary",
-    amount: 50000,
-    type: "income",
-  },
-  {
-    id: 3,
-    date: "10 Mar 2026",
-    category: "Travel",
-    description: "Metro",
-    amount: 120,
-    type: "expense",
-  },
-];
-
-const TransactionTable = () => {
+const TransactionTable = ({ transactions }: TransactionTableProps) => {
   return (
     <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-3 md:py-4 md:px-6">
       {/* Header */}

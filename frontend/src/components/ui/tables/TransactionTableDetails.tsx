@@ -1,101 +1,16 @@
 import { useState } from "react";
 import { FaRegEdit } from "react-icons/fa";
+import type { DetailsTransactionType } from "../../../types/DataTypes";
 
-interface Transaction {
-  id: number;
-  date: string;
-  category: string;
-  description: string;
-  amount: number;
-  type: "income" | "expense";
+interface DetailsTransactionProps {
+  detailsTransaction: DetailsTransactionType[];
 }
 
-const initialTransactions: Transaction[] = [
-  {
-    id: 1,
-    date: "12 Mar 2026",
-    category: "Food",
-    description: "Lunch",
-    amount: 250,
-    type: "expense",
-  },
-  {
-    id: 2,
-    date: "11 Mar 2026",
-    category: "Salary",
-    description: "March Salary",
-    amount: 50000,
-    type: "income",
-  },
-  {
-    id: 3,
-    date: "10 Mar 2026",
-    category: "Travel",
-    description: "Metro",
-    amount: 120,
-    type: "expense",
-  },
-  {
-    id: 4,
-    date: "10 Mar 2026",
-    category: "Travel",
-    description: "Metro",
-    amount: 140,
-    type: "expense",
-  },
-  {
-    id: 5,
-    date: "09 Mar 2026",
-    category: "Shopping",
-    description: "Clothes",
-    amount: 1800,
-    type: "expense",
-  },
-  {
-    id: 6,
-    date: "08 Mar 2026",
-    category: "Freelance",
-    description: "Website project",
-    amount: 12000,
-    type: "income",
-  },
-  {
-    id: 7,
-    date: "07 Mar 2026",
-    category: "Bills",
-    description: "Electricity Bill",
-    amount: 2100,
-    type: "expense",
-  },
-  {
-    id: 8,
-    date: "06 Mar 2026",
-    category: "Food",
-    description: "Dinner",
-    amount: 450,
-    type: "expense",
-  },
-  {
-    id: 9,
-    date: "05 Mar 2026",
-    category: "Investment",
-    description: "Stock profit",
-    amount: 3500,
-    type: "income",
-  },
-  {
-    id: 10,
-    date: "04 Mar 2026",
-    category: "Travel",
-    description: "Bus ticket",
-    amount: 80,
-    type: "expense",
-  },
-];
-
-const TransactionTableDetails = () => {
+const TransactionTableDetails = ({
+  detailsTransaction,
+}: DetailsTransactionProps) => {
   const [transactions, setTransactions] =
-    useState<Transaction[]>(initialTransactions);
+    useState<DetailsTransactionType[]>(detailsTransaction);
 
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
 
@@ -110,6 +25,11 @@ const TransactionTableDetails = () => {
       setSelectedRows([...selectedRows, id]);
     }
   };
+
+  const filteredTransactions =
+    filterType === "all"
+      ? transactions
+      : transactions.filter((txn) => txn.type === filterType);
 
   const toggleSelectAll = () => {
     if (selectedRows.length === filteredTransactions.length) {
@@ -130,22 +50,15 @@ const TransactionTableDetails = () => {
     setSelectedRows([]);
   };
 
-  const filteredTransactions =
-    filterType === "all"
-      ? transactions
-      : transactions.filter((txn) => txn.type === filterType);
-
   return (
     <div className="bg-white rounded-2xl border border-slate-200 shadow-sm px-2 py-8 md:px-6">
       {/* HEADER */}
       <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-3 md:mb-4 px-4">
-        <h2 className="text-lg md:text-xl text-slate-600 hover:text-green-700 cursor-pointer font-semibold capitalize">
+        <h2 className="text-lg md:text-xl text-slate-600 font-semibold capitalize">
           Transaction history
         </h2>
 
-        {/* filter & delete */}
         <div className="flex items-center justify-end">
-          {/* FILTER DROPDOWN */}
           <select
             value={filterType}
             onChange={(e) =>
@@ -165,7 +78,7 @@ const TransactionTableDetails = () => {
         <table className="w-full text-xs lg:text-base min-w-100">
           <thead className="border-b text-slate-500">
             <tr>
-              <th className="py-3 px-2 w-10 text-left ">
+              <th className="py-3 px-2 w-10 text-left">
                 <input
                   type="checkbox"
                   checked={
@@ -180,6 +93,7 @@ const TransactionTableDetails = () => {
               <th className="py-3 px-2 text-left">Category</th>
               <th className="py-3 px-2 text-left">Description</th>
               <th className="py-3 px-2 text-right">Amount(₹)</th>
+              <th className="py-3 px-2 text-center">Edit</th>
             </tr>
           </thead>
 
@@ -187,7 +101,7 @@ const TransactionTableDetails = () => {
             {filteredTransactions.map((txn) => (
               <tr
                 key={txn.id}
-                className={`border-b hover:bg-green-100 hover:text-green-600 transition ${
+                className={`border-b hover:bg-green-100 transition ${
                   selectedRows.includes(txn.id) ? "bg-slate-100" : ""
                 }`}
               >

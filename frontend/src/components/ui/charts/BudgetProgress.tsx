@@ -13,10 +13,10 @@ const BudgetProgress = ({ name, spent, target }: BudgetProgressProps) => {
   const isCompleted = spent >= target;
 
   return (
-    <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-4 flex flex-col gap-3 w-full hover:shadow-md transition">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        {/* Name + Completed Badge */}
+    <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-4 flex flex-col gap-3 hover:shadow-md transition">
+      {/* Top Row */}
+      <div className="flex justify-between items-start">
+        {/* Title + Completed */}
         <div className="flex items-center gap-2">
           <h2 className="text-lg font-semibold text-slate-700 capitalize">
             {name}
@@ -24,13 +24,13 @@ const BudgetProgress = ({ name, spent, target }: BudgetProgressProps) => {
 
           {isCompleted && (
             <span className="flex items-center gap-1 text-green-600 text-xs font-medium">
-              <IoIosCheckmarkCircle size={18} />
+              <IoIosCheckmarkCircle size={16} />
               Completed
             </span>
           )}
         </div>
 
-        {/* Icons */}
+        {/* Actions */}
         <div className="flex gap-2">
           <button className="text-blue-500 hover:scale-110 transition">
             <FiEdit2 size={16} />
@@ -51,12 +51,9 @@ const BudgetProgress = ({ name, spent, target }: BudgetProgressProps) => {
       </div>
 
       {/* Footer */}
-      <div className="flex justify-between items-center">
-        <span className="text-sm text-slate-500">
-          {percentage.toFixed(0)}% achieved
-        </span>
-
-        <span className="text-sm text-slate-600">
+      <div className="flex justify-between text-sm text-slate-600">
+        <span>{percentage.toFixed(0)}%</span>
+        <span>
           ₹{spent} / ₹{target}
         </span>
       </div>

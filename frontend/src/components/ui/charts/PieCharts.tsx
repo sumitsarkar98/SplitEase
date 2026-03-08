@@ -5,6 +5,7 @@ import {
   Cell,
   Tooltip,
   Legend,
+  Label,
 } from "recharts";
 
 interface PieData {
@@ -12,37 +13,37 @@ interface PieData {
   value: number;
 }
 
-const PieCharts = () => {
-  const data: PieData[] = [
-    { name: "Income", value: 50000 },
-    { name: "Expense", value: 30000 },
-    { name: "Savings", value: 20000 },
-  ];
+interface PieChartsProps {
+  data: PieData[];
+}
 
-  const COLORS = ["#16a34a", "#dc2626", "#148c68"];
+const COLORS = ["#16a34a", "#dc2626", "#148c68", "#f59e0b", "#6366f1"];
 
+const PieCharts = ({ data }: PieChartsProps) => {
   const total = data.reduce((acc, item) => acc + item.value, 0);
 
   return (
-    <div className="w-full h-80 bg-white p-4">
+    <div className="w-full h-80">
       <ResponsiveContainer>
         <PieChart>
           <Pie
             data={data}
             dataKey="value"
             nameKey="name"
-            outerRadius={100}
             innerRadius={70}
+            outerRadius={100}
             paddingAngle={4}
-            isAnimationActive={true}
-            animationDuration={800}
           >
             {data.map((_, index) => (
-              <Cell
-                key={`cell-${index}`}
-                fill={COLORS[index % COLORS.length]}
-              />
+              <Cell key={index} fill={COLORS[index % COLORS.length]} />
             ))}
+
+            {/* Center Text */}
+            <Label
+              value={`₹ ${total.toLocaleString("en-IN")}`}
+              position="center"
+              className="text-sm font-semibold fill-slate-600"
+            />
           </Pie>
 
           <Tooltip
@@ -50,17 +51,6 @@ const PieCharts = () => {
           />
 
           <Legend verticalAlign="bottom" height={36} />
-
-          {/* Center Text */}
-          <text
-            x="50%"
-            y="50%"
-            textAnchor="middle"
-            dominantBaseline="middle"
-            className="text-sm fill-slate-600"
-          >
-            ₹ {total.toLocaleString("en-IN")}
-          </text>
         </PieChart>
       </ResponsiveContainer>
     </div>

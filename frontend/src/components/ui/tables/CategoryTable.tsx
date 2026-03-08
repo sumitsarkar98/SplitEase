@@ -1,20 +1,10 @@
-interface CategoryDataType {
-  category: string;
-  amount: number;
-  percentage: number;
+import type { CategoryDataType } from "../../../types/DataTypes";
+
+interface CategoryTableProps {
+  categoryData: CategoryDataType[];
 }
 
-const CategoryTable = () => {
-  const categoryData: CategoryDataType[] = [
-    { category: "Food", amount: 8200, percentage: 32 },
-    { category: "Travel", amount: 5400, percentage: 21 },
-    { category: "Shopping", amount: 4300, percentage: 17 },
-    { category: "Bills", amount: 3100, percentage: 12 },
-    { category: "Entertainment", amount: 2500, percentage: 10 },
-    { category: "Entertainment", amount: 2500, percentage: 10 },
-    { category: "Others", amount: 1800, percentage: 8 },
-  ];
-
+const CategoryTable = ({ categoryData }: CategoryTableProps) => {
   return (
     <div className="overflow-x-auto h-100 bg-white">
       <table className="w-full text-xs md:text-sm">
@@ -43,7 +33,7 @@ const CategoryTable = () => {
               {/* Category */}
               <td
                 className="py-3 px-4 font-medium text-slate-700 
-              transition-colors duration-300 group-hover:text-green-700"
+              transition-colors duration-300 group-hover:text-green-700 capitalize"
               >
                 {item.category}
               </td>
