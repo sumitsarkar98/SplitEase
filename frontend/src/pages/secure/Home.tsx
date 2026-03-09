@@ -8,7 +8,7 @@ const Home = () => {
   return (
     <div className="flex">
       {/* ================= Sidebar ================= */}
-      <aside className="fixed top-16 left-0 h-[calc(100vh-4rem)] w-60 bg-white border-r border-slate-200 p-4 hidden lg:flex flex-col">
+      <aside className="fixed top-16 left-0 h-[calc(100vh-20rem)] w-60 border-r border-slate-200 p-4 hidden lg:flex flex-col">
         {/* Sidebar Title */}
         <p className="text-xs text-slate-400 uppercase tracking-wider mb-8">
           Main Menu

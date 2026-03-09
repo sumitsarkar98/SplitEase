@@ -1,5 +1,7 @@
 import { FiBell, FiMenu, FiX } from "react-icons/fi";
-import { NavLink } from "react-router-dom";
+import { GoChevronDown } from "react-icons/go";
+
+import { Link, NavLink } from "react-router-dom";
 import { useState } from "react";
 
 const Header = () => {
@@ -15,6 +17,33 @@ const Header = () => {
           </NavLink>
         </h1>
 
+        {/* Middle Section */}
+        <nav className="hidden md:flex items-center gap-10">
+          <Link
+            to="#"
+            className="nav-link text-green-200 hover:text-white hover:-translate-y-0.5 transition-all duration-200 ease-out"
+          >
+            Product
+          </Link>
+          <Link
+            to="#"
+            className="nav-link text-green-200 hover:text-white hover:-translate-y-0.5 transition-all duration-200 ease-out"
+          >
+            Features
+          </Link>
+          <Link
+            to="#"
+            className="nav-link text-green-200 hover:text-white hover:-translate-y-0.5 transition-all duration-200 ease-out"
+          >
+            Resources
+          </Link>
+          <Link
+            to="#"
+            className="nav-link text-green-200 hover:text-white hover:-translate-y-0.5 transition-all duration-200 ease-out"
+          >
+            Pricing
+          </Link>
+        </nav>
         {/* Right Section */}
         <div className="flex items-center gap-5">
           {/* Notification */}

@@ -67,8 +67,12 @@ const Landing = () => {
             </div>
 
             {/* trust text */}
-            <p className="text-xs text-slate-400 pt-2">
-              No credit card required <span>•</span> Free forever plans
+            <p className="text-xs text-slate-500 pt-2">
+              Free to start
+              <span className="text-slate-500 mx-2">•</span>
+              No credit card required
+              <span className="text-slate-500 mx-2">•</span>
+              Cancel anytime
             </p>
           </div>
 
