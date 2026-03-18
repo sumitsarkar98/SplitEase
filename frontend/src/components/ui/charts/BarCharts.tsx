@@ -10,16 +10,20 @@ import {
   Legend,
 } from "recharts";
 
-interface BarchartProps {
-  data: BarchartDataType[];
-}
+const BarData: BarchartDataType[] = [
+  { month: "Jan", income: 50000, expense: 32000 },
+  { month: "Feb", income: 42000, expense: 28000 },
+  { month: "May", income: 48000, expense: 30000 },
+  { month: "Jun", income: 55000, expense: 37000 },
+  { month: "aug", income: 55000, expense: 37000 },
+];
 
-const BarCharts = ({ data }: BarchartProps) => {
+const BarCharts = () => {
   return (
     <div className="w-full h-100">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart
-          data={data}
+          data={BarData}
           margin={{
             top: 10,
             right: 10,

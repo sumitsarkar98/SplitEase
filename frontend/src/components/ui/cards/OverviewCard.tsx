@@ -13,7 +13,7 @@ interface CardProps {
 }
 
 const OverviewCard = ({ data, period = "monthly" }: CardProps) => {
-  const { title, value, change } = data;
+  const { title, value, percentage } = data;
 
   let icon: ReactNode;
   let colorClass: string;
@@ -21,28 +21,28 @@ const OverviewCard = ({ data, period = "monthly" }: CardProps) => {
   let changeText: string;
 
   switch (title.toLowerCase()) {
-    case "balance":
+    case "available_balance":
       icon = <MdOutlineAccountBalance className="text-lg sm:text-xl" />;
       colorClass = "text-blue-600 bg-blue-100";
-      changeTitle = "Wallet Balance";
-      changeText = `saved this ${period}`;
+      changeTitle = "Available Balance";
+      changeText = `remaining this ${period}`;
       break;
 
-    case "average spending":
+    case "total_spending":
       icon = <MdOutlinePayments className="text-lg sm:text-xl" />;
       colorClass = "text-red-600 bg-red-100";
-      changeTitle = "Average Spending";
-      changeText = `${period}ly avg expenses`;
+      changeTitle = "Total Spending";
+      changeText = `spent this ${period}`;
       break;
 
-    case "top category":
+    case "top_category":
       icon = <MdOutlineCategory className="text-lg sm:text-xl" />;
       colorClass = "text-amber-600 bg-amber-100";
       changeTitle = "Top Category";
       changeText = `used this ${period}`;
       break;
 
-    case "savings":
+    case "goal_progress":
       icon = <MdSavings className="text-lg sm:text-xl" />;
       colorClass = "text-green-600 bg-green-100";
       changeTitle = "Goal Progress";
@@ -87,7 +87,7 @@ const OverviewCard = ({ data, period = "monthly" }: CardProps) => {
 
         <div className="flex items-center gap-2 text-xs ">
           <span className="flex items-center gap-1 px-2 py-1 rounded-md font-medium bg-green-100 text-green-600 tracking-wider">
-            {Math.abs(change)}%
+            {Math.abs(percentage).toFixed(1)}%
           </span>
 
           <span className="text-slate-400 tracking-wider">{changeText}</span>

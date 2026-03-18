@@ -1,7 +1,6 @@
-export interface CategoryDataType {
-  category: string;
-  amount: number;
-  percentage: number;
+export interface CategoryDataTypes {
+  title: string;
+  total_expense: string;
 }
 
 export interface TransactionDataType {
@@ -37,5 +36,7 @@ export interface BudgetDataType {
 export interface OverviewDataType {
   title: string;
   value: string | number;
-  change: number;
+  percentage: number;
 }
+
+export type PeriodType = "month" | "year" | "week";
