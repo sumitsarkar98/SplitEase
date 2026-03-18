@@ -1,8 +1,13 @@
 import express from "express";
-import { getDashboardData } from "../controllers/dashboard.controllers.js";
+import { periodMiddleware } from "../middlewares/period.middleware.js";
+import {
+  getCardData,
+  getCategoryTransactions,
+} from "../controllers/dashboard.controllers.js";
 
 const router = express.Router();
 
-router.get("/", getDashboardData);
+router.get("/card", periodMiddleware, getCardData);
+router.get("/category", periodMiddleware, getCategoryTransactions);
 
 export default router;

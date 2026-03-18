@@ -3,14 +3,14 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 
-const getDashboardData = asyncHandler(async (req, res) => {
+const getCardData = asyncHandler(async (req, res) => {
   const userId = req.user?.id || 1;
+  let period = req.period;
 
   if (!userId) {
     throw new ApiError(401, "Unauthorized");
   }
 
-  const period = req.query.period || "monthly";
   if (!["weekly", "monthly", "yearly"].includes(period)) {
     period = "monthly";
   }
@@ -105,16 +105,12 @@ const getDashboardData = asyncHandler(async (req, res) => {
   `;
 
   // ===== EXECUTE =====
-  let data;
-  try {
-    const [rows] = await pool.execute(query, [userId]);
-    data = rows[0];
-  } catch (error) {
-    console.error("SQL ERROR:", error.sqlMessage);
-    throw new ApiError(500, "Database query failed");
+  const [rows] = await pool.execute(query, [userId]);
+  if (!rows.length) {
+    throw new ApiError(404, "data not found");
   }
 
-  const safeData = data || {};
+  const safeData = rows[0];
 
   // ===== RESPONSE FORMAT =====
   const OverviewData = [
@@ -129,7 +125,7 @@ const getDashboardData = asyncHandler(async (req, res) => {
       percentage: parseFloat(safeData.spending_percentage) || 0,
     },
     {
-      title: "Top Category",
+      title: "top_category",
       value: safeData.top_category || "N/A",
       percentage: parseFloat(safeData.topcategory_percentage) || 0,
     },
@@ -149,4 +145,62 @@ const getDashboardData = asyncHandler(async (req, res) => {
   );
 });
 
-export { getDashboardData };
+const getCategoryTransactions = asyncHandler(async (req, res) => {
+  const userId = req.user?.id || 1;
+  let period = req.period;
+
+  if (!userId) {
+    throw new ApiError(401, "Unauthorized");
+  }
+
+  if (!["weekly", "monthly", "yearly"].includes(period)) {
+    period = "monthly";
+  }
+
+  // ===== DATE FILTER =====
+  let dateFilter = "";
+
+  if (period === "weekly") {
+    dateFilter = "AND t.created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)";
+  } else if (period === "monthly") {
+    dateFilter = `
+      AND MONTH(t.created_at) = MONTH(CURDATE()) 
+      AND YEAR(t.created_at) = YEAR(CURDATE())
+    `;
+  } else if (period === "yearly") {
+    dateFilter = "AND YEAR(t.created_at) = YEAR(CURDATE())";
+  }
+
+  // ===== QUERY =====
+  const query = `
+    SELECT 
+      c.title,
+      SUM(t.amount) AS total_expense
+    FROM transactions t
+    INNER JOIN categories c
+      ON t.category_id = c.id
+    WHERE 
+      t.type = 'expense'
+      AND t.user_id = ?
+      ${dateFilter}
+    GROUP BY t.category_id, c.title
+  `;
+
+  // ===== EXECUTE =====
+  const [rows] = await pool.execute(query, [userId]);
+
+  if (!rows.length) {
+    throw new ApiError(404, "data not found");
+  }
+  const safedata = rows;
+
+  return res.status(200).json(
+    new ApiResponse("category expenses data retrieved successfully", {
+      user_id: userId,
+      period,
+      data: safedata,
+    }),
+  );
+});
+
+export { getCardData, getCategoryTransactions };
