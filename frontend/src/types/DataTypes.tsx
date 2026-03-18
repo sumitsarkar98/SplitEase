@@ -33,3 +33,9 @@ export interface BudgetDataType {
   spent: number;
   target: number;
 }
+
+export interface OverviewDataType {
+  title: string;
+  value: string | number;
+  change: number;
+}

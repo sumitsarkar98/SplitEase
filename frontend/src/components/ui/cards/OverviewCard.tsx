@@ -1,64 +1,73 @@
+import type { OverviewDataType } from "../../../types/DataTypes.ts";
 import {
   MdOutlineAccountBalance,
-  MdOutlineAccountBalanceWallet,
+  MdOutlineCategory,
+  MdSavings,
+  MdOutlinePayments,
 } from "react-icons/md";
-import { FaArrowTrendUp } from "react-icons/fa6";
-import { IoMdTrendingDown } from "react-icons/io";
-
 import type { ReactNode } from "react";
 
-interface Props {
-  title: string;
-  amount: string;
-  increment?: number;
-  decrement?: number;
+interface CardProps {
+  data: OverviewDataType;
+  period?: string;
 }
 
-const OverviewCard = ({ title, amount, increment, decrement }: Props) => {
-  let cardTitle: string;
+const OverviewCard = ({ data, period = "monthly" }: CardProps) => {
+  const { title, value, change } = data;
+
   let icon: ReactNode;
   let colorClass: string;
+  let changeTitle: string;
+  let changeText: string;
 
   switch (title.toLowerCase()) {
     case "balance":
       icon = <MdOutlineAccountBalance className="text-lg sm:text-xl" />;
       colorClass = "text-blue-600 bg-blue-100";
-      cardTitle = "Total Balance";
+      changeTitle = "Wallet Balance";
+      changeText = `saved this ${period}`;
       break;
 
-    case "income":
-      icon = <FaArrowTrendUp className="text-lg sm:text-xl" />;
-      colorClass = "text-green-600 bg-green-100";
-      cardTitle = "Total Income";
-      break;
-
-    case "expense":
-      icon = <IoMdTrendingDown className="text-lg sm:text-xl" />;
+    case "average spending":
+      icon = <MdOutlinePayments className="text-lg sm:text-xl" />;
       colorClass = "text-red-600 bg-red-100";
-      cardTitle = "Total Expense";
+      changeTitle = "Average Spending";
+      changeText = `${period}ly avg expenses`;
       break;
 
-    case "wallet":
-      icon = <MdOutlineAccountBalanceWallet className="text-lg sm:text-xl" />;
+    case "top category":
+      icon = <MdOutlineCategory className="text-lg sm:text-xl" />;
       colorClass = "text-amber-600 bg-amber-100";
-      cardTitle = "Wallet Balance";
+      changeTitle = "Top Category";
+      changeText = `used this ${period}`;
+      break;
+
+    case "savings":
+      icon = <MdSavings className="text-lg sm:text-xl" />;
+      colorClass = "text-green-600 bg-green-100";
+      changeTitle = "Goal Progress";
+      changeText = `achived this ${period}`;
       break;
 
     default:
       icon = <MdOutlineAccountBalance className="text-lg sm:text-xl" />;
       colorClass = "text-slate-600 bg-slate-100";
-      cardTitle = "Total Balance";
+      changeTitle = title;
+      changeText = `change in ${period}`;
   }
+
+  const formattedValue =
+    typeof value === "number" ? `₹  ${value.toLocaleString()}` : value;
 
   return (
     <div
-      className="bg-white rounded-2xl border border-slate-200 
-    py-4 px-6 sm:p-5 lg:p-6 shadow-sm hover:shadow-md transition-all duration-200"
+      className="bg-white rounded-2xl border border-slate-200 cursor-pointer 
+      py-4 px-6 sm:p-5 lg:p-5 shadow-sm hover:shadow-md transition-all duration-200"
     >
-      {/* CARD HEADER */}
+      {/* HEADER */}
       <div className="flex items-end justify-between mb-2">
         <h2 className="text-xs sm:text-sm font-semibold text-slate-500 tracking-wide">
-          {cardTitle}
+          {changeTitle}
         </h2>
 
         <div
@@ -70,29 +79,19 @@ const OverviewCard = ({ title, amount, increment, decrement }: Props) => {
         </div>
       </div>
 
-      {/* CARD BODY */}
+      {/* BODY */}
       <div className="space-y-2">
-        <h1 className="text-3xl lg:text-4xl font-bold text-slate-600">
-          ₹ {amount}
+        <h1 className="text-3xl lg:text-4xl font-bold text-slate-600 tracking-wide">
+          {formattedValue}
         </h1>
 
-        {(increment !== undefined || decrement !== undefined) && (
-          <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm">
-            {increment !== undefined && (
-              <span className="flex items-center gap-1 text-green-600 bg-green-50 px-2 py-1 rounded-md font-medium">
-                ↑ {increment}%
-              </span>
-            )}
+        <div className="flex items-center gap-2 text-xs ">
+          <span className="flex items-center gap-1 px-2 py-1 rounded-md font-medium bg-green-100 text-green-600 tracking-wider">
+            {Math.abs(change)}%
+          </span>
 
-            {decrement !== undefined && (
-              <span className="flex items-center gap-1 text-red-600 bg-red-50 px-2 py-1 rounded-md font-medium">
-                ↓ {decrement}%
-              </span>
-            )}
-
-            <span className="text-slate-400">vs previous period</span>
-          </div>
-        )}
+          <span className="text-slate-400 tracking-wider">{changeText}</span>
+        </div>
       </div>
     </div>
   );

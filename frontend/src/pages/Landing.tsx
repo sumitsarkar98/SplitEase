@@ -37,9 +37,11 @@ const Landing = () => {
             {/* description */}
             <p className="text-lg font-light text-slate-500 max-w-xl mx-auto md:mx-0">
               Track expenses, manage budgets, and control your finances
-              effortlessly with{" "}
-              <strong className="text-amber-500 font-medium">SplitEase</strong>.
-              Everything you need to manage money in one simple dashboard.
+              effortlessly with
+              <strong className="text-amber-500 font-medium mx-1">
+                <i>SplitEase</i>
+              </strong>
+              . Everything you need to manage money in one simple dashboard.
             </p>
 
             {/* buttons */}

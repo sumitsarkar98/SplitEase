@@ -1,22 +1,30 @@
 import jwt from "jsonwebtoken";
 
-// check Auth middleware
 const authMiddleware = (req, res, next) => {
-  // Read token from cookie
-  const token = req.cookies?.token;
-
-  if (!token) {
-    return res
-      .status(401)
-      .json({ message: "please login again! session expired" });
-  }
-
   try {
+    // Read token from cookies
+    const token =
+      req.cookies?.token || req.headers.authorization?.split(" ")[1];
+
+    if (!token) {
+      return res.status(401).json({
+        success: false,
+        message: "Please login again. Session expired.",
+      });
+    }
+
+    // Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // Attach decoded payload to request
+
+    // Attach user to request
+    req.user = decoded;
+
     next();
-  } catch (err) {
-    res.status(401).json({ message: "Invalid or Expired Token" });
+  } catch (error) {
+    return res.status(401).json({
+      success: false,
+      message: "Invalid or expired token",
+    });
   }
 };
 

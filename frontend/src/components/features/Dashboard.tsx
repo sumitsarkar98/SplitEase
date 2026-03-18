@@ -10,6 +10,7 @@ import { useState } from "react";
 
 import type { BarchartDataType, CategoryDataType } from "../../types/DataTypes";
 import type { TransactionDataType } from "../../types/DataTypes";
+import type { OverviewDataType } from "../../types/DataTypes";
 
 //  Mock Data (to be replaced with API data)
 const categoryData: CategoryDataType[] = [
@@ -57,13 +58,22 @@ const BarData: BarchartDataType[] = [
   { month: "Jun", income: 55000, expense: 37000 },
 ];
 
-const Dashboard = () => {
-  const [chartType, setChartType] = useState<"monthly" | "yearly" | "overall">(
-    "monthly",
-  );
+const OverviewData: OverviewDataType[] = [
+  { title: "available_balance", value: 123456, change: 5.2 },
+  { title: "total_spending", value: 234567, change: 8.4 },
+  { title: "Top Category", value: "Food", change: 3.8 },
+  { title: "goal_progress", value: 12222, change: 1.2 },
+];
 
+const Dashboard = () => {
+  const periods = [
+    { value: "month", label: "Monthly" },
+    { value: "year", label: "Yearly" },
+    { value: "week", label: "Weekly" },
+  ];
+  const [period, setPeriod] = useState<"month" | "year" | "week">("month");
   return (
-    <div className="md:p-6 lg:p-8 space-y-6 bg-light min-h-screen">
+    <div className="md:p-6 space-y-6 bg-light min-h-screen">
       {/* ===== HEADER ===== */}
       <section className="flex flex-col md:flex-row md:items-center md:justify-between px-2 md:gap-4">
         {/* Greeting */}
@@ -80,19 +90,20 @@ const Dashboard = () => {
         </div>
 
         {/* Filter Buttons */}
-        <div className="flex bg-slate-100 p-1 rounded-lg w-fit">
-          {["monthly", "yearly", "overall"].map((type) => (
+        <div className="flex items-center justify-end bg-slate-100 p-1 rounded-lg w-fit">
+          <div></div>
+          {periods.map((p) => (
             <button
-              key={type}
-              onClick={() => setChartType(type as any)}
-              className={`px-3 py-1.5 text-xs md:text-sm rounded-md transition capitalize
-              ${
-                chartType === type
-                  ? "bg-white text-green-600 shadow-sm"
-                  : "text-slate-500 hover:text-slate-700"
-              }`}
+              key={p.value}
+              onClick={() => setPeriod(p.value as any)}
+              className={`px-3 py-1.5 text-xs md:text-sm rounded-md transition
+      ${
+        period === p.value
+          ? "bg-white text-green-600 shadow-sm"
+          : "text-slate-500 hover:text-slate-700"
+      }`}
             >
-              {type}
+              {p.label}
             </button>
           ))}
         </div>
@@ -100,10 +111,9 @@ const Dashboard = () => {
 
       {/* ===== OVERVIEW CARDS ===== */}
       <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 px-3 md:px-0 md:gap-4">
-        <OverviewCard title="balance" amount="1,23,456" increment={5.2} />
-        <OverviewCard title="income" amount="2,34,567" increment={8.4} />
-        <OverviewCard title="expense" amount="1,12,345" decrement={3.8} />
-        <OverviewCard title="wallet" amount="12,222" decrement={1.2} />
+        {OverviewData.map((data, index) => (
+          <OverviewCard key={index} data={data} period={period} />
+        ))}
       </section>
 
       {/* ===== CATEGORY + CHART ===== */}
@@ -114,7 +124,7 @@ const Dashboard = () => {
           <div className="flex items-center justify-center md:justify-between my-4 md:mb-4">
             <div className="flex items-center">
               <h2 className="text-base md:text-lg font-semibold text-slate-600 capitalize">
-                {chartType} Expense Breakdown
+                {`${period}ly Expense Breakdown`}
               </h2>
               <FaArrowRightLong className="ml-2 text-sm hidden lg:block" />
             </div>
@@ -134,7 +144,7 @@ const Dashboard = () => {
         {/* Chart */}
         <div className="bg-white rounded-xl p-2 md:p-6 border border-slate-200 shadow-sm">
           <h2 className="text-base md:text-lg font-semibold text-slate-600 capitalize my-4 text-center">
-            {chartType} Cash Flow
+           {`${period}ly Cash Flow`}
           </h2>
 
           <BarCharts data={BarData} />
