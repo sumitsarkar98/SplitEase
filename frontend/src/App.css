@@ -1,0 +1,56 @@
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap");
+
+:root {
+  /* ================= PRIMARY (Base: #148C68) ================= */
+  --base-color: #148c68;
+  --dark-base-color: #0c5c45;
+
+  /* ================= ACCENT (For Highlights / Alerts) ================= */
+  --color-accent: #f59e0b;
+  --color-accent-hover: #d97706;
+
+  /* ================= TEXT COLORS ================= */
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #64748b;
+  --color-text-muted: #94a3b8;
+
+  /* ================= BACKGROUNDS ================= */
+  --bg-base: #d1faef;
+  --bg-white: #ffffff;
+  --bg-light: #ffffff;
+
+  /* ================= STATES ================= */
+  --color-success: #16a34a;
+  --color-danger: #dc2626;
+  --color-warning: #f59e0b;
+
+  /* ================= BORDERS ================= */
+  --border-light: #e2e8f0;
+  --border-dark: #cbd5e1;
+
+  --chart-color: #8688f5;
+  /* ================= FONTS ================= */
+  --font-heading: "Playfair Display", serif;
+  --font-body: "Poppins", sans-serif;
+  --font-highlight: "Ubuntu", sans-serif;
+}
+
+html,
+body {
+  font-family: var(--font-body);
+  background-color: var(--bg-light);
+  color: var(--color-text-primary);
+}
+header {
+  background-color: var(--base-color);
+}
+.text-heading {
+  font-family: var(--font-heading);
+  font-weight: 700;
+}
+.font-body {
+  font-family: var(--font-body);
+}
+.font-highlight {
+  font-family: var(--font-highlight);
+}
