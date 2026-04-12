@@ -1,13 +1,13 @@
 // handling errors of api
 class ApiError extends Error {
   constructor(
-    statuscode,
+    statusCode,
     message = "somthing went wrong",
     errors = [],
     stack = "",
   ) {
     super(message);
-    this.statuscode = statuscode;
+    this.statusCode = statusCode;
     this.data = null;
     this.message = message;
     this.success = false;

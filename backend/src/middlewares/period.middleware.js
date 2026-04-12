@@ -1,17 +1,15 @@
 const periodMiddleware = (req, res, next) => {
   let { period } = req.query;
 
-  // default
-  if (!period) period = "month";
+  if (!period) period = "monthly";
 
-  // normalize
-  const allowed = ["week", "month", "year"];
+  const allowed = ["weekly", "monthly", "yearly"];
+
   if (!allowed.includes(period)) {
-    period = "month";
+    period = "monthly";
   }
 
   req.period = period;
-
   next();
 };
 
