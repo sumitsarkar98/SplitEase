@@ -30,6 +30,6 @@ app.use("/api/v1/auth", userRoutes);
 
 // Protected Featured Routes
 app.use("/api/v1/dashboard", dashboardRoutes);
-app.use("/api/v1/transactions", authMiddleware, transactionRoutes);
+app.use("/api/v1/transactions", transactionRoutes);
 
 export default app;

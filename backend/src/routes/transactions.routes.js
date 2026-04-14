@@ -2,13 +2,17 @@ import express from "express";
 import authMiiddleware from "../middlewares/auth.middleware.js";
 
 import {
-  newTransaction,
   getAllTransactions,
+  newTransaction,
+  editTransaction,
+  deleteTransaction,
 } from "../controllers/transaction.controllers.js";
 
 const router = express.Router();
 
-router.post("/new", authMiiddleware, newTransaction);
-router.get("/all", authMiiddleware, getAllTransactions);
+router.post("/new", newTransaction);
+router.get("/all", getAllTransactions);
+router.put("/edit/:transactionId", editTransaction);
+router.delete("/delete/:transactionId", deleteTransaction);
 
 export default router;
