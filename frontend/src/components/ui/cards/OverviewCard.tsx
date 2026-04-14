@@ -19,19 +19,19 @@ const OverviewCard = ({ data, period = "month" }: CardProps) => {
 
   // switch case
   switch (title) {
-    case "available_balance":
-      label = "Available Balance";
+    case "savings":
+      label = "My Savings";
       colorClass = "text-blue-600 bg-blue-100";
       icon = <MdOutlineAccountBalance />;
       break;
 
-    case "total_spending":
+    case "spending":
       label = "Total Spending";
       colorClass = "text-red-600 bg-red-100";
       icon = <MdOutlinePayments />;
       break;
 
-    case "goal_progress":
+    case "goal":
       label = "Goal Progress";
       colorClass = "text-green-600 bg-green-100";
       icon = <MdSavings />;

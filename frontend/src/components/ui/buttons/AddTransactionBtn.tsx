@@ -18,7 +18,7 @@ const style = {
   overflowY: "auto",
 };
 
-// 🔹 future API-ready arrays
+// future API-ready arrays
 const incomeCategories = ["Salary", "Freelance", "Bonus"];
 const expenseCategories = ["Food", "Transport", "Shopping"];
 const goals = ["Emergency Fund", "Trip", "New Laptop"];

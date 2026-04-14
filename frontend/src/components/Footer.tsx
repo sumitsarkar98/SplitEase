@@ -34,7 +34,7 @@ const Footer = () => {
                 className="text-sm font-semibold"
                 style={{ color: "var(--bg-white)" }}
               >
-                Product
+                Features
               </p>
 
               <Link
