@@ -1,5 +1,6 @@
 import express from "express";
 import { periodMiddleware } from "../middlewares/period.middleware.js";
+import authMiddleware from "../middlewares/auth.middleware.js";
 import {
   getCardData,
   getCategoryTransactions,

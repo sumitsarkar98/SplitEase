@@ -170,7 +170,7 @@ const getTrends = asyncHandler(async (req, res) => {
   const userId = req.user?.id || 1;
 
   if (!userId) {
-    throw new ApiError(401, "Unauthorized");
+    throw new ApiError(401, "Unauthorized access");
   }
 
   const query = `

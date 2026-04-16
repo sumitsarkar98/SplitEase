@@ -10,9 +10,9 @@ import {
 
 const router = express.Router();
 
-router.post("/new", newTransaction);
-router.get("/all", getAllTransactions);
-router.put("/edit/:transactionId", editTransaction);
-router.delete("/delete/:transactionId", deleteTransaction);
+router.post("/", newTransaction);
+router.get("/", getAllTransactions);
+router.put("/:transactionId", editTransaction);
+router.delete("/:transactionId", deleteTransaction);
 
 export default router;
