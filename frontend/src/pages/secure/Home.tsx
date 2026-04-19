@@ -6,6 +6,7 @@ import CategoryTable from "../../components/ui/tables/CategoryTable";
 import { MdOutlineHistory } from "react-icons/md";
 import { PiInfo } from "react-icons/pi";
 import { CgInsights } from "react-icons/cg";
+import { FaMoneyBillTransfer } from "react-icons/fa6";
 
 const Home = () => {
   return (
@@ -54,6 +55,20 @@ const Home = () => {
               }
             >
               <LuWallet /> Budget
+            </NavLink>
+
+            <NavLink
+              to="#"
+              className={({ isActive }) =>
+                `flex items-center gap-2 p-2 rounded-lg transition ${
+                  isActive
+                    ? "bg-green-50 text-green-600 font-medium"
+                    : "text-slate-600 hover:bg-slate-100"
+                }`
+              }
+            >
+              <FaMoneyBillTransfer />
+              Split
             </NavLink>
           </nav>
         </div>

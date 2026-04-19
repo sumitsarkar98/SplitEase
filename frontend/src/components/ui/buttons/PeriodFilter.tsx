@@ -1,8 +1,11 @@
-import { useState } from "react";
-import type { PeriodType } from "../../../types/ApiDataTypes.ts";
+import type { PeriodType } from "../../../types/ApiDataTypes";
 
-const PeriodFilter = () => {
-  const [period, setPeriod] = useState<PeriodType>("month");
+type Props = {
+  period: PeriodType;
+  setPeriod: (p: PeriodType) => void;
+};
+
+const PeriodFilter = ({ period, setPeriod }: Props) => {
   const periods: PeriodType[] = ["week", "month", "year"];
 
   return (

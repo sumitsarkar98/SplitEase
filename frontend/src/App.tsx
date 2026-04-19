@@ -4,6 +4,8 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import AppLayout from "./components/layouts/AppLayout.tsx";
 // import ProtectedRoute from "./components/layout/ProtectedRoutes.tsx";
@@ -22,20 +24,23 @@ import Transactions from "./components/features/Transactions.tsx";
 import Budget from "./components/features/Budget.tsx";
 // import Income from "./components/features/Income.tsx";
 
+const queryClient = new QueryClient();
+
 const App = () => {
   return (
-    <Router>
-      <Routes>
-        <Route element={<AppLayout />}>
-          <Route path="/" element={<Landing />} />
-          <Route path="/home" element={<Home />}>
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="transactions" element={<Transactions />} />
-            <Route path="budget" element={<Budget />} />
-          </Route>
+    <QueryClientProvider client={queryClient}>
+      <Router>
+        <Routes>
+          <Route element={<AppLayout />}>
+            <Route path="/" element={<Landing />} />
+            <Route path="/home" element={<Home />}>
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="transactions" element={<Transactions />} />
+              <Route path="budget" element={<Budget />} />
+            </Route>
 
-          {/* Protected Routes */}
-          {/* <Route element={<ProtectedRoute />}>
+            {/* Protected Routes */}
+            {/* <Route element={<ProtectedRoute />}>
             <Route path="home" element={<Home />}>
               <Route index element={<Navigate to="dashboard" replace />} />
               <Route path="dashboard" element={<Dashboard />} />
@@ -43,10 +48,12 @@ const App = () => {
               <Route path="income" element={<Income />} />
             </Route>
           </Route> */}
-          <Route path="*" element={<Error />} />
-        </Route>
-      </Routes>
-    </Router>
+            <Route path="*" element={<Error />} />
+          </Route>
+        </Routes>
+      </Router>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
   );
 };
 

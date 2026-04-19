@@ -9,18 +9,35 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-// your data (fixed months)
-const data = [
-  { month: "Jan", income: 40000, expense: 20000 },
-  { month: "Feb", income: 40000, expense: 21000 },
-  { month: "Mar", income: 40000, expense: 25000 },
-  { month: "Apr", income: 45000, expense: 60000 },
-  { month: "May", income: 47000, expense: 26000 },
-  { month: "Jun", income: 50000, expense: 40000 },
-  { month: "Jul", income: 50000, expense: 30000 },
-];
+import { useTrends } from "../../../HOOKS/dashboard/useTrends";
+import Empty from "../../../pages/Empty";
 
 export default function SimpleLineChart() {
+  const { data = [], isLoading, isError } = useTrends();
+
+  if (isLoading) {
+    return <p className="text-center text-sm">Loading chart...</p>;
+  }
+
+  if (isError) {
+    return (
+      <p className="text-center text-sm text-red-500">Error loading chart</p>
+    );
+  }
+
+  // EMPTY STATE
+  if (!data || data.length === 0) {
+    return (
+      <div className="h-[250px] flex items-center justify-center">
+        <Empty
+          title="No trend data yet"
+          buttonText="Add Transaction"
+          link="/home/transactions"
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="w-full h-75 sm:h-90 lg:h-100">
       <ResponsiveContainer width="100%" height="100%">
@@ -30,15 +47,12 @@ export default function SimpleLineChart() {
         >
           <CartesianGrid strokeDasharray="3 3" />
 
-          {/* correct key */}
           <XAxis dataKey="month" tick={{ fontSize: 12 }} />
-
           <YAxis tick={{ fontSize: 12 }} />
 
           <Tooltip />
           <Legend />
 
-          {/* income line */}
           <Line
             type="monotone"
             dataKey="income"
@@ -46,7 +60,6 @@ export default function SimpleLineChart() {
             strokeWidth={2}
           />
 
-          {/* expense line */}
           <Line
             type="monotone"
             dataKey="expense"

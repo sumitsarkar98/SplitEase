@@ -9,7 +9,7 @@ export interface OverviewDataType {
 export interface CategoryDataTypes {
   title: string;
   type: "income" | "expense";
-  amount: string;
+  total: string;
 }
 export interface CategoryExpenseTypes {
   title: string;
@@ -30,4 +30,13 @@ export interface BudgetDataType {
   category: string;
   limit: number;
   spent: number;
+}
+
+export interface RecentIncomeType {
+  id: number;
+  amount: number;
+  category: string;
+  type: "income" | "expense" | "goal";
+  note: string;
+  date: string;
 }

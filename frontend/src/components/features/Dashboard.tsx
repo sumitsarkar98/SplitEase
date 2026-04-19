@@ -2,6 +2,12 @@ import type {
   OverviewDataType,
   CategoryDataTypes,
 } from "../../types/ApiDataTypes";
+import type { PeriodType } from "../../types/ApiDataTypes";
+import Empty from "../../pages/Empty.tsx";
+
+import { useState } from "react";
+
+import { useCardData } from "../../HOOKS/dashboard/useOverViewCard";
 
 import OverviewCard from "../ui/cards/OverviewCard";
 import PeriodFilter from "../ui/buttons/PeriodFilter";
@@ -15,40 +21,55 @@ import { FaClockRotateLeft } from "react-icons/fa6";
 import { MdOutlineHistory } from "react-icons/md";
 import { PiInfo } from "react-icons/pi";
 import { CgInsights } from "react-icons/cg";
-
-const OverviewData: OverviewDataType[] = [
-  {
-    title: "available_balance",
-    value: 61900,
-    percentage: 52.24,
-  },
-  {
-    title: "total_spending",
-    value: 23600,
-    percentage: 19.92,
-  },
-  {
-    title: "goal_progress",
-    value: 33000,
-    percentage: 27.85,
-  },
-];
-
-// ===== RAW DATA =====
-const rawData: CategoryDataTypes[] = [
-  { title: "Food", type: "income", amount: "3100.00" },
-  { title: "Transport", type: "income", amount: "1200.00" },
-  { title: "Shopping", type: "income", amount: "6000.00" },
-  { title: "Bills", type: "expense", amount: "2000.00" },
-  { title: "Housing", type: "expense", amount: "8000.00" },
-  { title: "Health", type: "expense", amount: "1700.00" },
-  { title: "Entertainment", type: "expense", amount: "1600.00" },
-];
-
-const incomeData = rawData.filter((item) => item.type === "income");
-const expenseData = rawData.filter((item) => item.type === "expense");
+import { useCategoryData } from "../../HOOKS/dashboard/useCategoryData.ts";
+import RecentIncome from "../ui/cards/RecentIncome.tsx";
 
 const Dashboard = () => {
+  const [period, setPeriod] = useState<PeriodType>("month");
+
+  // call use hooks to fetch data for cards and category breakdown
+  const {
+    data: OverviewData = [],
+    isLoading: cardLoading,
+    isError: cardIsError,
+    error: cardError,
+  } = useCardData(period);
+
+  const {
+    data: categoryData,
+    isLoading: categoryLoading,
+    isError: categoryIsError,
+    error: categoryError,
+  } = useCategoryData(period);
+
+  // safely extract data with fallback to empty array
+  const safeOverviewData: OverviewDataType[] = OverviewData || [];
+  const safeCategoryData: CategoryDataTypes[] = categoryData || [];
+
+  // separate income and expense data
+  const incomeData = safeCategoryData.filter(
+    (item) => item.type?.toLowerCase() === "income",
+  );
+  console.log("INCOME DATA:", incomeData);
+  const expenseData = safeCategoryData.filter(
+    (item) => item.type?.toLowerCase() === "expense",
+  );
+
+  // handle loading states
+  if (cardLoading || categoryLoading) {
+    return <p>Loading...</p>;
+  }
+
+  // handle error states
+  if (cardIsError || categoryIsError) {
+    const errorMessage =
+      (cardError as any)?.response?.data?.message ||
+      (categoryError as any)?.response?.data?.message ||
+      "Something went wrong";
+
+    return <div className="p-4 text-red-500">Error: {errorMessage}</div>;
+  }
+
   return (
     <div className="space-y-5">
       {/* ===== SECTION-1 (PAGE HEADER) ===== */}
@@ -69,13 +90,13 @@ const Dashboard = () => {
 
         {/* Filter Buttons - right */}
         <div className="hidden lg:block">
-          <PeriodFilter />
+          <PeriodFilter period={period} setPeriod={setPeriod} />
         </div>
       </section>
 
       {/* ===== SECTION-2 (OVERVIEW CARDS) ===== */}
       <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 md:gap-5 px-1 sm:px-2 md:px-0">
-        {OverviewData.map((data) => (
+        {safeOverviewData.map((data) => (
           <OverviewCard key={data.title} data={data} />
         ))}
       </section>
@@ -104,9 +125,9 @@ const Dashboard = () => {
       {/* ===== SECTION-4 (income/expense breakdown)===== */}
       <section className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {/* ===== INCOME ===== */}
-        <div className="bg-white rounded-lg border border-slate-200 p-4 sm:p-5 shadow-sm hover:shadow-md transition">
+        <div className="bg-white rounded-lg border border-slate-200 p-4 sm:p-5 shadow-sm">
           {/* Header */}
-          <div className="mb-2 flex items-start justify-start gap-2">
+          <div className="mb-2 flex items-start gap-2">
             <LuTrendingUp className="text-green-500 mt-1" size={20} />
 
             <div className="text-start">
@@ -119,20 +140,31 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* Chart */}
-          <div className="w-full flex items-center justify-center">
-            <CustomPieCharts data={incomeData} category="income" />
+          {/* BODY */}
+          <div className="h-[250px] flex items-center justify-center">
+            {incomeData.length === 0 ? (
+              <Empty
+                title="No income data yet"
+                buttonText="Add Transaction"
+                link="/home/transactions"
+              />
+            ) : (
+              <CustomPieCharts data={incomeData} category="income" />
+            )}
           </div>
 
           {/* Total */}
-          <div className="text-center flex justify-center items-center">
-            <p className="text-md text-slate-400">
-              Total Income :{" "}
-              <span className="text-md font-semibold text-slate-500">
-                ₹{incomeData.reduce((acc, cur) => acc + Number(cur.amount), 0)}
-              </span>
-            </p>
-          </div>
+          {incomeData.length > 0 && (
+            <div className="text-center mt-2">
+              <p className="text-md text-slate-400">
+                Total Income :{" "}
+                <span className="font-semibold text-slate-500">
+                  ₹{" "}
+                  {incomeData.reduce((acc, cur) => acc + Number(cur.total), 0)}
+                </span>
+              </p>
+            </div>
+          )}
         </div>
 
         {/* ===== EXPENSE ===== */}
@@ -155,17 +187,25 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* Chart */}
-          <div className="w-full flex items-center justify-center">
-            <CustomPieCharts data={expenseData} category="expense" />
+          {/* body */}
+          <div className="h-[250px] flex items-center justify-center">
+            {expenseData.length === 0 ? (
+              <Empty
+                title="No expense data yet"
+                buttonText="Add Expense"
+                link="/home/transactions"
+              />
+            ) : (
+              <CustomPieCharts data={expenseData} category="expense" />
+            )}
           </div>
 
           {/* Total */}
           <div className="text-center ">
             <p className="text-md text-slate-400">
-              Total Income :{" "}
+              Total Expense :{" "}
               <span className="text-md font-semibold text-slate-500">
-                ₹{incomeData.reduce((acc, cur) => acc + Number(cur.amount), 0)}
+                ₹ {expenseData.reduce((acc, cur) => acc + Number(cur.total), 0)}
               </span>
             </p>
           </div>
@@ -187,16 +227,17 @@ const Dashboard = () => {
       </section>
 
       {/* ===== SECTION-6 ===== */}
-      <section className="hidden lg:flex bg-white rounded-lg border border-slate-200 p-3 sm:p-5 shadow-sm hover:shadow-md transition">
+      <section className="flex flex-col bg-white rounded-lg border border-slate-200 p-3 sm:p-5 shadow-sm hover:shadow-md transition">
         {/* Header */}
-        <div className="mb-4 flex items-center gap-2 text-green-600">
+        <div className="mb-4 flex justify-start items-center text-green-600">
           <FaClockRotateLeft size={18} />
-          <h2 className="text-sm sm:text-base lg:text-lg font-semibold text-slate-700 capitalize">
+          <h2 className="text-base lg:text-lg text-center px-2 sm:p-2 font-semibold text-slate-600 capitalize">
             Your Recent Incomes
           </h2>
         </div>
 
-        {/* table */}
+        {/* Content */}
+        <RecentIncome />
       </section>
 
       {/* ===== SECTION-7 (Mobile Only) ===== */}
