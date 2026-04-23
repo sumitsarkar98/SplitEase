@@ -243,15 +243,40 @@ const deleteTransaction = asyncHandler(async (req, res) => {
 const getAllTransactions = asyncHandler(async (req, res) => {
   const userId = req.user?.id || 1;
 
+  const period = req.period; 
+  const { type = "all" } = req.query;
+
+  let dateFilter = "";
+  let params = [userId];
+
+  // Period filter (UPDATED)
+  if (period === "weekly") {
+    dateFilter = "AND transaction_date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)";
+  } else if (period === "monthly") {
+    dateFilter =
+      "AND transaction_date >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)";
+  } else if (period === "yearly") {
+    dateFilter = "AND transaction_date >= DATE_SUB(CURDATE(), INTERVAL 1 YEAR)";
+  }
+
+  // Type filter
+  let typeFilter = "";
+  if (type !== "all") {
+    typeFilter = "AND type = ?";
+    params.push(type);
+  }
+
   const [transactions] = await pool.execute(
     `
     SELECT *
     FROM transactions
     WHERE user_id = ?
+    ${dateFilter}
+    ${typeFilter}
     ORDER BY transaction_date DESC
     LIMIT 10
     `,
-    [userId],
+    params,
   );
 
   return res.status(200).json(

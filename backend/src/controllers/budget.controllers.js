@@ -7,40 +7,49 @@ import { ApiResponse } from "../utils/apiResponse.js";
 const getBudgets = asyncHandler(async (req, res) => {
   const userId = req.user?.id || 1;
 
-  let { month } = req.query;
-  month = month ? parseInt(month) : null;
+  let { month, viewAll } = req.query;
+
+  const currentMonth = new Date().getMonth() + 1;
+  const currentYear = new Date().getFullYear();
 
   let query = `
-SELECT 
-  b.id,
-  c.title AS category,
-  b.budget_limit AS budgetLimit,
-  b.spent,
-  b.month,
+    SELECT 
+      b.id,
+      c.title AS category,
+      b.budget_limit AS budgetLimit,
+      b.spent,
+      b.month,
 
-  CASE
-    WHEN (b.year < YEAR(CURDATE())) 
-      OR (b.year = YEAR(CURDATE()) AND b.month < MONTH(CURDATE())) 
-      THEN 'expired'
+      CASE
+        WHEN (b.year < YEAR(CURDATE())) 
+          OR (b.year = YEAR(CURDATE()) AND b.month < MONTH(CURDATE())) 
+          THEN 'expired'
 
-    WHEN b.spent >= b.budget_limit 
-      THEN 'exceeded'
+        WHEN b.spent >= b.budget_limit 
+          THEN 'exceeded'
 
-    ELSE 'active'
-  END AS status
+        ELSE 'active'
+      END AS status
 
-FROM budgets b
-LEFT JOIN categories c 
-  ON b.category_id = c.id
-WHERE b.user_id = ?
-AND b.year = YEAR(CURDATE())
-`;
+    FROM budgets b
+    LEFT JOIN categories c 
+      ON b.category_id = c.id
+    WHERE b.user_id = ?
+    AND b.year = ?
+  `;
 
-  const params = [userId];
+  const params = [userId, currentYear];
 
-  if (month !== null && !isNaN(month)) {
+  // DEFAULT → current month only
+  if (!viewAll) {
     query += ` AND b.month = ?`;
-    params.push(month);
+    params.push(currentMonth);
+  }
+
+  // OPTIONAL → specific month filter
+  if (month) {
+    query += ` AND b.month = ?`;
+    params.push(Number(month));
   }
 
   query += ` ORDER BY b.month ASC`;
@@ -48,16 +57,12 @@ AND b.year = YEAR(CURDATE())
   const [rows] = await pool.execute(query, params);
 
   return res.status(200).json(
-    new ApiResponse(
-      rows.length ? "Budgets retrieved successfully" : "No budgets found",
-      {
-        total: rows.length,
-        budgets: rows,
-      },
-    ),
+    new ApiResponse("Budgets retrieved successfully", {
+      total: rows.length,
+      budgets: rows,
+    }),
   );
 });
-
 // CREATE NEW BUDGET
 const createBudget = asyncHandler(async (req, res) => {
   const userId = req.user?.id || 1;
@@ -113,7 +118,7 @@ const updateBudget = asyncHandler(async (req, res) => {
 
   const [rows] = await pool.execute(
     `SELECT * FROM budgets WHERE id = ? AND user_id = ?`,
-    [budgetId, userId]
+    [budgetId, userId],
   );
 
   if (!rows.length) {
@@ -132,13 +137,13 @@ const updateBudget = asyncHandler(async (req, res) => {
      AND month = ? 
      AND year = YEAR(CURDATE())
      AND id != ?`,
-    [userId, existing.category_id, updatedMonth, budgetId]
+    [userId, existing.category_id, updatedMonth, budgetId],
   );
 
   if (duplicate.length) {
     throw new ApiError(
       400,
-      "Another budget already exists for this category & month"
+      "Another budget already exists for this category & month",
     );
   }
 
@@ -150,12 +155,7 @@ const updateBudget = asyncHandler(async (req, res) => {
       month = ?
     WHERE id = ? AND user_id = ?
     `,
-    [
-      budget_limit ?? existing.budget_limit,
-      updatedMonth,
-      budgetId,
-      userId,
-    ]
+    [budget_limit ?? existing.budget_limit, updatedMonth, budgetId, userId],
   );
 
   if (result.affectedRows === 0) {
@@ -165,7 +165,7 @@ const updateBudget = asyncHandler(async (req, res) => {
   return res.status(200).json(
     new ApiResponse("Budget updated successfully", {
       id: Number(budgetId),
-    })
+    }),
   );
 });
 

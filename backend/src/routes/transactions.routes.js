@@ -7,11 +7,12 @@ import {
   editTransaction,
   deleteTransaction,
 } from "../controllers/transaction.controllers.js";
+import { periodMiddleware } from "../middlewares/period.middleware.js";
 
 const router = express.Router();
 
 router.post("/", newTransaction);
-router.get("/", getAllTransactions);
+router.get("/", periodMiddleware, getAllTransactions);
 router.put("/:transactionId", editTransaction);
 router.delete("/:transactionId", deleteTransaction);
 
