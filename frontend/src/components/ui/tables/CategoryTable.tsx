@@ -40,7 +40,7 @@ const categoryData: CategoryExpenseTypes[] = [
 
 const CategoryTable = () => {
   return (
-    <div className="p-2 flex justify-between items-center">
+    <div className="lg:p-2 flex justify-between items-center">
       <table className="w-full text-xs md:text-sm">
         {/* ===== HEADER ===== */}
         <thead>

@@ -1,123 +1,29 @@
-import type { TransactionDetailsType } from "../../../types/ApiDataTypes";
-
 import { useState } from "react";
 import { MdFileDownload } from "react-icons/md";
 import { FaRegEdit } from "react-icons/fa";
-
-const dummyTransactions: TransactionDetailsType[] = [
-  {
-    id: 1,
-    date: "2026-03-01",
-    category: "Salary",
-    description: "Monthly salary credited",
-    amount: 50000,
-    type: "income",
-  },
-  {
-    id: 2,
-    date: "2026-03-02",
-    category: "Food",
-    description: "Swiggy order",
-    amount: 450,
-    type: "expense",
-  },
-  {
-    id: 3,
-    date: "2026-03-03",
-    category: "Transport",
-    description: "Uber ride",
-    amount: 220,
-    type: "expense",
-  },
-  {
-    id: 4,
-    date: "2026-03-05",
-    category: "Freelance",
-    description: "Website project payment",
-    amount: 12000,
-    type: "income",
-  },
-  {
-    id: 5,
-    date: "2026-03-06",
-    category: "Shopping",
-    description: "Clothing purchase",
-    amount: 3200,
-    type: "expense",
-  },
-  {
-    id: 6,
-    date: "2026-03-07",
-    category: "Bills",
-    description: "Electricity bill",
-    amount: 1800,
-    type: "expense",
-  },
-  {
-    id: 7,
-    date: "2026-03-10",
-    category: "Investment",
-    description: "Stock dividend",
-    amount: 2500,
-    type: "income",
-  },
-  {
-    id: 8,
-    date: "2026-03-12",
-    category: "Food",
-    description: "Restaurant dinner",
-    amount: 950,
-    type: "expense",
-  },
-  {
-    id: 9,
-    date: "2026-03-15",
-    category: "Transport",
-    description: "Fuel refill",
-    amount: 1500,
-    type: "expense",
-  },
-  {
-    id: 10,
-    date: "2026-03-18",
-    category: "Bonus",
-    description: "Performance bonus",
-    amount: 10000,
-    type: "income",
-  },
-];
+import { useTransactions } from "../../../HOOKS/transaction/useTransactions";
 
 const TransactionTableDetails = () => {
-  const [transactions, setTransactions] = useState(dummyTransactions);
+  const [period, setPeriod] = useState<"weekly" | "monthly" | "yearly">(
+    "monthly",
+  );
+  const [type, setType] = useState<"all" | "income" | "expense">("all");
+
+  const { data = [], isLoading, isError } = useTransactions(period, type);
 
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
 
-  const [dateFilter, setDateFilter] = useState<
-    "all" | "week" | "month" | "year"
-  >("all");
-
-  const [filterType, setFilterType] = useState<"all" | "income" | "expense">(
-    "all",
-  );
-
   const toggleRow = (id: number) => {
-    if (selectedRows.includes(id)) {
-      setSelectedRows(selectedRows.filter((row) => row !== id));
-    } else {
-      setSelectedRows([...selectedRows, id]);
-    }
+    setSelectedRows((prev) =>
+      prev.includes(id) ? prev.filter((row) => row !== id) : [...prev, id],
+    );
   };
 
-  const filteredTransactions =
-    filterType === "all"
-      ? transactions
-      : transactions.filter((txn) => txn.type === filterType);
-
   const toggleSelectAll = () => {
-    if (selectedRows.length === filteredTransactions.length) {
+    if (selectedRows.length === data.length) {
       setSelectedRows([]);
     } else {
-      setSelectedRows(filteredTransactions.map((txn) => txn.id));
+      setSelectedRows(data.map((txn: any) => txn.id));
     }
   };
 
@@ -126,100 +32,105 @@ const TransactionTableDetails = () => {
   };
 
   const deleteSelected = () => {
-    setTransactions(
-      transactions.filter((txn) => !selectedRows.includes(txn.id)),
-    );
+    // Replace with API later
+    alert("Delete API call with IDs: " + selectedRows.join(","));
     setSelectedRows([]);
   };
+
+  //  loading & error
+  if (isLoading) return <div className="p-4">Loading...</div>;
+  if (isError)
+    return <div className="p-4 text-red-500">Error loading data</div>;
 
   return (
     <div className="w-full">
       {/* HEADER */}
-      <div className="flex items-center justify-between md:gap-4 md:justify-end">
-        {/* Type Filter */}
+      <section className="flex items-center justify-end gap-2">
         <select
-          value={filterType}
+          value={type}
           onChange={(e) =>
-            setFilterType(e.target.value as "all" | "income" | "expense")
+            setType(e.target.value as "all" | "income" | "expense")
           }
-          className="cursor-pointer border border-slate-200 rounded-lg px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-green-700"
+          className="border rounded-lg px-2 py-1 text-xs"
         >
           <option value="all">All Type</option>
           <option value="income">Income</option>
           <option value="expense">Expense</option>
         </select>
 
-        {/* Date Filter */}
         <select
-          value={dateFilter}
+          value={period}
           onChange={(e) =>
-            setDateFilter(e.target.value as "all" | "week" | "month" | "year")
+            setPeriod(e.target.value as "weekly" | "monthly" | "yearly")
           }
-          className="border cursor-pointer border-slate-200 rounded-lg px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-green-700"
+          className="border rounded-lg px-2 py-1 text-xs"
         >
-          <option value="all">All Time</option>
-          <option value="week">This Week</option>
-          <option value="month">This Month</option>
-          <option value="year">This Year</option>
+          <option value="weekly">This Week</option>
+          <option value="monthly">This Month</option>
+          <option value="yearly">This Year</option>
         </select>
-        {/* download-btn */}
-        <button className="flex items-center gap-1 border border-slate-300 px-2 py-1 rounded-lg  hover:shadow-sm cursor-pointer transition">
+
+        <button className="flex items-center gap-1 border px-2 py-1 rounded-lg">
           <MdFileDownload size={18} />
           <span className="hidden sm:inline text-xs">Export</span>
         </button>
-      </div>
+      </section>
 
-      {/* Delete */}
-      <div className="mt-4 flex justify-end cursor-pointer">
-        {selectedRows.length > 0 && (
-          <div className="flex items-center gap-3 text-sm">
-            <span className="text-xs text-slate-500">
-              {selectedRows.length} items selected
-            </span>
+      {/* ACTION BAR */}
+      {selectedRows.length > 0 && (
+        <section className="mt-4 flex justify-between items-center">
+          <span className="text-xs text-slate-500">
+            {selectedRows.length} selected
+          </span>
 
+          <div className="flex gap-2">
             <button
               onClick={deleteSelected}
-              className="bg-red-600 text-white px-3 py-1.5 rounded-lg hover:bg-red-700"
+              className="bg-red-600 text-white px-3 py-1.5 rounded-lg"
             >
               Delete
             </button>
+
+            {selectedRows.length === 1 && (
+              <button
+                onClick={() => editTransaction(selectedRows[0])}
+                className="sm:hidden bg-green-600 text-white px-3 py-1.5 rounded-lg"
+              >
+                Edit
+              </button>
+            )}
           </div>
-        )}
-      </div>
+        </section>
+      )}
 
       {/* TABLE */}
-      <div className="overflow-hidden max-h-100 cursor-pointer">
-        <table className="w-full text-xs lg:text-sm min-w-100">
-          <thead className="border-b text-slate-500">
+      <section className="overflow-hidden mt-3">
+        <table className="w-full text-xs sm:text-sm">
+          <thead className="border-b border-slate-400 text-slate-600">
             <tr>
-              <th className="py-3 px-2 w-10 text-left">
+              <th className="p-2 text-left">
                 <input
                   type="checkbox"
                   checked={
-                    selectedRows.length === filteredTransactions.length &&
-                    filteredTransactions.length > 0
+                    selectedRows.length === data.length && data.length > 0
                   }
                   onChange={toggleSelectAll}
                 />
               </th>
-
-              <th className="py-3 px-2 text-left">Date</th>
-              <th className="py-3 px-2 text-left">Category</th>
-              <th className="py-3 px-2 text-left">Description</th>
-              <th className="py-3 px-2 text-right">Amount(₹)</th>
-              <th className="py-3 px-2 text-center">Edit</th>
+              <th className="text-left p-2">Date</th>
+              <th className="text-left p-2">Category</th>
+              <th className="hidden sm:table-cell text-left p-2">
+                Description
+              </th>
+              <th className="text-right p-2">Amount</th>
+              <th className="hidden sm:table-cell text-center p-2">Edit</th>
             </tr>
           </thead>
 
           <tbody>
-            {filteredTransactions.map((txn) => (
-              <tr
-                key={txn.id}
-                className={`border-b hover:bg-slate-100 transition ${
-                  selectedRows.includes(txn.id) ? "bg-slate-100" : ""
-                }`}
-              >
-                <td className="py-3 px-2">
+            {data.map((txn: any) => (
+              <tr key={txn.id} className="border-b hover:bg-slate-100">
+                <td className="p-2">
                   <input
                     type="checkbox"
                     checked={selectedRows.includes(txn.id)}
@@ -227,21 +138,19 @@ const TransactionTableDetails = () => {
                   />
                 </td>
 
-                <td className="text-slate-500 py-3 px-2">
-                  {new Date(txn.date).toLocaleDateString("en-IN", {
+                <td className="p-2">
+                  {new Date(txn.transaction_date).toLocaleDateString("en-IN", {
                     day: "2-digit",
                     month: "short",
                   })}
                 </td>
 
-                <td className="font-medium text-slate-700 py-3 px-2">
-                  {txn.category}
-                </td>
+                <td className="p-2 font-medium">{txn.category}</td>
 
-                <td className="text-slate-500 py-3 px-2">{txn.description}</td>
+                <td className="hidden sm:table-cell p-2">{txn.note}</td>
 
                 <td
-                  className={`text-right font-semibold py-3 px-2 ${
+                  className={`p-2 text-right font-semibold ${
                     txn.type === "income" ? "text-green-600" : "text-red-600"
                   }`}
                 >
@@ -249,19 +158,19 @@ const TransactionTableDetails = () => {
                   {txn.amount}
                 </td>
 
-                <td className="py-3 px-2 text-center">
+                <td className="hidden sm:table-cell text-center">
                   <button
                     onClick={() => editTransaction(txn.id)}
-                    className="text-slate-500 hover:text-green-600 transition"
+                    className="text-slate-500 hover:text-green-600"
                   >
-                    <FaRegEdit size={18} />
+                    <FaRegEdit />
                   </button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
-      </div>
+      </section>
     </div>
   );
 };

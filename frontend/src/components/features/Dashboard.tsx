@@ -117,7 +117,7 @@ const Dashboard = () => {
         </div>
 
         {/* Right button */}
-        <div className="flex justify-start sm:justify-end">
+        <div className="w-full sm:w-fit flex justify-center sm:justify-end">
           <AddTransactionBtn />
         </div>
       </section>
@@ -131,7 +131,7 @@ const Dashboard = () => {
             <LuTrendingUp className="text-green-500 mt-1" size={20} />
 
             <div className="text-start">
-              <h2 className="text-sm sm:text-base lg:text-lg font-semibold text-slate-600">
+              <h2 className="text-base lg:text-lg font-semibold text-slate-600">
                 Monthly Income Breakdown
               </h2>
               <p className="text-xs text-slate-400">
@@ -178,11 +178,11 @@ const Dashboard = () => {
             </div>
 
             <div className="text-start">
-              <h2 className="text-sm sm:text-base lg:text-lg font-semibold text-slate-600">
+              <h2 className="text-base lg:text-lg font-semibold text-slate-600">
                 Monthly Expense Breakdown
               </h2>
               <p className="text-xs text-slate-400">
-                Breakdown of your spending
+                Breakdown of your spending sources
               </p>
             </div>
           </div>
@@ -229,11 +229,18 @@ const Dashboard = () => {
       {/* ===== SECTION-6 ===== */}
       <section className="flex flex-col bg-white rounded-lg border border-slate-200 p-3 sm:p-5 shadow-sm hover:shadow-md transition">
         {/* Header */}
-        <div className="mb-4 flex justify-start items-center text-green-600">
-          <FaClockRotateLeft size={18} />
-          <h2 className="text-base lg:text-lg text-center px-2 sm:p-2 font-semibold text-slate-600 capitalize">
-            Your Recent Incomes
-          </h2>
+        <div className="mb-3 px-0 lg:px-2 flex flex-col">
+          <div className="flex items-center text-green-600">
+            <FaClockRotateLeft size={18} />
+            <h2 className="text-base lg:text-lg px-2 font-semibold text-slate-600 capitalize">
+              Your Recent Incomes
+            </h2>
+          </div>
+
+          {/* Subheading */}
+          <p className="text-xs sm:text-sm text-slate-400 pl-4">
+            A quick overview of your latest income.
+          </p>
         </div>
 
         {/* Content */}
@@ -251,9 +258,9 @@ const Dashboard = () => {
               <h1 className="text-base font-semibold">Transactions Overview</h1>
             </div>
 
-            <span className="text-[11px] px-2 py-1 flex items-center gap-2 rounded-md text-green-700 bg-green-100 w-fit">
-              <PiInfo className="shrink-0" />
-              This month's activity
+            <span className="text-xs py-1 px-2 flex items-center gap-2 rounded-md text-slate-500 bg-slate-100 w-full">
+              <PiInfo className="shrink-0 text-slate-700" />
+              Expenses stacked for this month
             </span>
           </div>
 

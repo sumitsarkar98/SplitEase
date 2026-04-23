@@ -81,7 +81,7 @@ const AddTransactionBtn = () => {
         rounded-lg transition"
       >
         <FiPlus size={18} />
-        <span className="hidden md:block">Add transaction</span>
+        <span>Add transaction</span>
       </button>
 
       {/* Modal */}
@@ -181,7 +181,7 @@ const AddTransactionBtn = () => {
               type="submit"
               className="w-full bg-green-700 hover:bg-green-600 text-white py-2 rounded text-xs sm:text-sm"
             >
-              Save Transaction
+              Add Transaction
             </button>
           </form>
         </Box>

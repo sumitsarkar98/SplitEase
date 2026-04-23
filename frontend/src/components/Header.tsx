@@ -110,6 +110,16 @@ const Header = () => {
             >
               Budgets
             </NavLink>
+
+            <NavLink
+              to="/home/split"
+              onClick={() => setOpen(false)}
+              className={({ isActive }) =>
+                isActive ? "text-amber-200" : "text-white"
+              }
+            >
+              Split
+            </NavLink>
           </nav>
         </div>
       )}

@@ -58,7 +58,7 @@ const Home = () => {
             </NavLink>
 
             <NavLink
-              to="#"
+              to="/home/split"
               className={({ isActive }) =>
                 `flex items-center gap-2 p-2 rounded-lg transition ${
                   isActive
@@ -119,9 +119,9 @@ const Home = () => {
               </h1>
             </div>
 
-            <span className="text-xs py-1 px-2 flex items-center gap-2 rounded-md text-slate-700 bg-slate-50 w-fit">
+            <span className="text-xs py-1 px-2 flex items-center gap-2 rounded-md text-slate-500 bg-slate-50 w-fit">
               <PiInfo className="shrink-0 text-green-500" />
-              Transaction stacked by this month
+              Expenses stacked for this month
             </span>
           </div>
           <div>

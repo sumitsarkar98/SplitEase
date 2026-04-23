@@ -1,65 +1,71 @@
-import type { BudgetDataType } from "../../types/ApiDataTypes";
-
+import { useState } from "react";
 import AddBudgetBtn from "../ui/buttons/AddBudgetBtn";
 import AddGoalBtn from "../ui/buttons/AddGoalBtn";
 import BudgetCard from "../ui/cards/BudgetCard";
 
+import { useBudgets } from "../../HOOKS/budgets/useBudgets";
+import { useGoals } from "../../HOOKS/budgets/useGoals";
+
 import { LuTrendingUp } from "react-icons/lu";
 import { HiOutlineSquaresPlus } from "react-icons/hi2";
+import { RiArrowDropDownLine } from "react-icons/ri";
 
-// demo data
-const budgets: BudgetDataType[] = [
-  {
-    id: 1,
-    category: "Food",
-    limit: 5000,
-    spent: 3200,
-  },
-  {
-    id: 2,
-    category: "Transport",
-    limit: 2000,
-    spent: 1800,
-  },
-  {
-    id: 3,
-    category: "Shopping",
-    limit: 4000,
-    spent: 4500,
-  },
-  {
-    id: 4,
-    category: "Shopping",
-    limit: 4000,
-    spent: 4500,
-  },
-];
-
-const goals: BudgetDataType[] = [
-  {
-    id: 1,
-    category: "Food",
-    limit: 5000,
-    spent: 3200,
-  },
-  {
-    id: 2,
-    category: "Transport",
-    limit: 2000,
-    spent: 1800,
-  },
-  {
-    id: 3,
-    category: "Shopping",
-    limit: 4000,
-    spent: 4500,
-  },
-];
+import type { BudgetDataType } from "../../types/ApiDataTypes";
 
 const Budget = () => {
+  const [viewAll, setViewAll] = useState(false);
+  const currentMonth = new Date().getMonth() + 1;
+
+  const {
+    data: budgets = [],
+    isLoading: budgetLoading,
+    isError: budgetError,
+  } = useBudgets(currentMonth, viewAll);
+
+  const {
+    data: goals = [],
+    isLoading: goalLoading,
+    isError: goalError,
+  } = useGoals();
+
+  /* ================= LOADING ================= */
+  if (budgetLoading || goalLoading) {
+    return <div className="p-4 text-center">Loading...</div>;
+  }
+
+  /* ================= ERROR ================= */
+  if (budgetError || goalError) {
+    return (
+      <div className="p-4 text-center text-red-500">
+        Failed to load data. Please try again.
+      </div>
+    );
+  }
+
+  /* ================= DATA NORMALIZATION ================= */
+
+  const formattedBudgets: BudgetDataType[] = budgets.map((b: any) => ({
+    id: b.id,
+    category: b.category,
+    limit: Number(b.budgetLimit),
+    spent: Number(b.spent),
+    status: b.status,
+  }));
+  console.log("budgets:", formattedBudgets);
+
+  const formattedGoals: BudgetDataType[] = goals.map((g: any) => ({
+    id: g.id,
+    category: g.title,
+    limit: g.targetAmount,
+    spent: g.savedAmount,
+    status: g.status,
+  }));
+
+  /* ================= UI ================= */
+
   return (
-    <div className="space-y-5">
-      {/* ===== SECTION-1 (PAGE HEADER) ===== */}
+    <div className="space-y-6">
+      {/* ===== HEADER ===== */}
       <section className="flex flex-col px-3 md:px-0">
         <h1 className="text-2xl sm:text-3xl font-semibold text-green-700 mb-1">
           Financial Planning
@@ -69,12 +75,10 @@ const Budget = () => {
         </p>
       </section>
 
-      {/* ===== SECTION-2 (OVERVIEW CARD) ===== */}
+      {/* ===== OVERVIEW ===== */}
       <section className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-green-100 p-3 md:p-4 rounded-lg">
-        {/* Left text */}
         <div className="flex items-start gap-2">
-          <LuTrendingUp className="text-green-500 mt-1 shrink-0" size={22} />
-
+          <LuTrendingUp className="text-green-500 mt-1" size={22} />
           <div>
             <h1 className="text-base sm:text-lg lg:text-2xl font-semibold text-green-600">
               Budget Overview
@@ -86,46 +90,61 @@ const Budget = () => {
           </div>
         </div>
 
-        {/* Right button */}
-        <div className="flex md:gap-2 w-full sm:w-auto justify-center">
+        <div className="flex gap-2 justify-center">
           <AddBudgetBtn />
           <AddGoalBtn />
         </div>
       </section>
 
-      {/* ===== SECTION-3 (BUDGET LIST) ===== */}
+      {/* ===== BUDGET LIST ===== */}
       <section>
-        {/* header */}
-        <div className="mb-4 flex items-center justify-start px-4 gap-2">
-          <HiOutlineSquaresPlus size={22} className="text-green-600" />
-          <h2 className="text-lg md:text-xl text-slate-600 font-semibold capitalize">
-            Monthly Budgets
-          </h2>
+        <div className="flex justify-between items-center mb-4 px-2 md:px-0">
+          <div className="flex items-center gap-2">
+            <HiOutlineSquaresPlus size={22} className="text-green-600" />
+            <h2 className="text-lg md:text-xl text-slate-600 font-semibold">
+              Monthly Budgets
+            </h2>
+          </div>
+
+          <button
+            onClick={() => setViewAll(true)}
+            className="flex items-center border rounded-lg px-2 text-xs text-green-600 hover:text-green-700"
+          >
+            <span>view all</span>
+            <RiArrowDropDownLine size={20} />
+          </button>
         </div>
 
-        {/* body */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-3 md:px-0">
-          {budgets.map((item) => (
-            <BudgetCard key={item.id} item={item} type="budget" />
-          ))}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-2 md:px-0">
+          {formattedBudgets.length > 0 ? (
+            formattedBudgets.map((item) => (
+              <BudgetCard key={item.id} item={item} type="budget" />
+            ))
+          ) : (
+            <p className="text-sm text-slate-400">No budgets found</p>
+          )}
         </div>
       </section>
 
-      {/* ===== SECTION-4 (goal LIST) ===== */}
+      {/* ===== GOALS LIST ===== */}
       <section>
-        {/* header */}
-        <div className="mb-4 flex items-center justify-start px-4 gap-2">
-          <HiOutlineSquaresPlus size={22} className="text-green-600" />
-          <h2 className="text-base lg:text-lg font-semibold text-slate-600 capitalize">
-            My Goals
-          </h2>
+        <div className="flex justify-between items-center mb-4 px-2 md:px-0">
+          <div className="flex items-center gap-2">
+            <HiOutlineSquaresPlus size={22} className="text-green-600" />
+            <h2 className="text-lg md:text-xl text-slate-600 font-semibold">
+              My Goals
+            </h2>
+          </div>
         </div>
 
-        {/* body */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-3 md:px-0">
-          {goals.map((item) => (
-            <BudgetCard key={item.id} item={item} type="goal" />
-          ))}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-2 md:px-0">
+          {formattedGoals.length > 0 ? (
+            formattedGoals.map((item) => (
+              <BudgetCard key={item.id} item={item} type="goal" />
+            ))
+          ) : (
+            <p className="text-sm text-slate-400">No goals found</p>
+          )}
         </div>
       </section>
     </div>

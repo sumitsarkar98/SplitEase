@@ -30,6 +30,7 @@ export interface BudgetDataType {
   category: string;
   limit: number;
   spent: number;
+  status?: string;
 }
 
 export interface RecentIncomeType {

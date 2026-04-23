@@ -44,7 +44,7 @@ const RecentIncome = () => {
         >
           {/* LEFT */}
           <div className="flex flex-col">
-            <p className="font-semibold text-base text-slate-800">
+            <p className="font-semibold text-base text-slate-700">
               {item.category}
             </p>
 

@@ -58,7 +58,7 @@ const OverviewCard = ({ data, period = "month" }: CardProps) => {
       </div>
 
       {/* BODY */}
-      <h1 className="text-4xl font-bold text-slate-600 tracking-wide">
+      <h1 className="text-3xl lg:text-4xl font-bold text-slate-600 tracking-wide">
         {formattedValue}
       </h1>
 

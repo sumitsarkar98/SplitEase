@@ -22,6 +22,7 @@ import Error from "./pages/Error.tsx";
 import Dashboard from "./components/features/Dashboard.tsx";
 import Transactions from "./components/features/Transactions.tsx";
 import Budget from "./components/features/Budget.tsx";
+import Split from "./components/features/Split.tsx";
 // import Income from "./components/features/Income.tsx";
 
 const queryClient = new QueryClient();
@@ -37,6 +38,7 @@ const App = () => {
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="transactions" element={<Transactions />} />
               <Route path="budget" element={<Budget />} />
+              <Route path="split" element={<Split />} />
             </Route>
 
             {/* Protected Routes */}
