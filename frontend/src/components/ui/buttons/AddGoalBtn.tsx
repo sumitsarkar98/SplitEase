@@ -10,7 +10,7 @@ const AddGoalButton = () => {
   p-2 sm:px-4 sm:py-2 
   rounded-lg shadow-sm transition"
       >
-        <FiPlus size={16} />
+        <FiPlus className="text-sm sm:text-base me-1" size={18} />
         Create Goal
       </button>
     </div>

@@ -102,7 +102,7 @@ const Header = () => {
             </NavLink>
 
             <NavLink
-              to="/home/budgets"
+              to="/home/budget"
               onClick={() => setOpen(false)}
               className={({ isActive }) =>
                 isActive ? "text-amber-200" : "text-white"

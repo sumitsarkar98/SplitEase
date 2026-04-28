@@ -37,6 +37,7 @@ const Transactions = () => {
           <AddTransactionBtn />
         </div>
       </section>
+      
       {/* ===== SECTION-3 (TABLE CARD) ===== */}
       <section className="bg-white rounded-xl border border-slate-200 shadow-sm px-3 py-5 sm:px-5 md:px-6 md:py-6">
         {/* HEADER */}

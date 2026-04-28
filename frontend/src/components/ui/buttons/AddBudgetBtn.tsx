@@ -10,7 +10,7 @@ const AddBudgetButton = () => {
   p-2 sm:px-4 sm:py-2 
   rounded-lg transition"
       >
-        <FiPlus className="text-sm sm:text-base" size={18} />
+        <FiPlus className="text-sm sm:text-base me-1" size={18} />
         add budget
       </button>
     </div>

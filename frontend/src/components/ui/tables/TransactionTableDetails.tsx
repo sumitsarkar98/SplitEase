@@ -45,13 +45,13 @@ const TransactionTableDetails = () => {
   return (
     <div className="w-full">
       {/* HEADER */}
-      <section className="flex items-center justify-end gap-2">
+      <section className="flex items-center justify-between md:justify-end md:gap-2">
         <select
           value={type}
           onChange={(e) =>
             setType(e.target.value as "all" | "income" | "expense")
           }
-          className="border rounded-lg px-2 py-1 text-xs"
+          className="border rounded-lg px-2 py-1 text-xs hover:bg-slate-50 cursor-pointer"
         >
           <option value="all">All Type</option>
           <option value="income">Income</option>
@@ -63,22 +63,22 @@ const TransactionTableDetails = () => {
           onChange={(e) =>
             setPeriod(e.target.value as "weekly" | "monthly" | "yearly")
           }
-          className="border rounded-lg px-2 py-1 text-xs"
+          className="border rounded-lg px-2 py-1 text-xs hover:bg-slate-50 cursor-pointer"
         >
           <option value="weekly">This Week</option>
           <option value="monthly">This Month</option>
           <option value="yearly">This Year</option>
         </select>
 
-        <button className="flex items-center gap-1 border px-2 py-1 rounded-lg">
+        <button className="flex items-center gap-1 border px-2 py-1 rounded-lg hover:bg-slate-50 cursor-pointer">
           <MdFileDownload size={18} />
-          <span className="hidden sm:inline text-xs">Export</span>
+          <span className="text-xs">Export</span>
         </button>
       </section>
 
       {/* ACTION BAR */}
       {selectedRows.length > 0 && (
-        <section className="mt-4 flex justify-between items-center">
+        <section className="mt-4 flex justify-end items-center gap-2">
           <span className="text-xs text-slate-500">
             {selectedRows.length} selected
           </span>
@@ -86,7 +86,7 @@ const TransactionTableDetails = () => {
           <div className="flex gap-2">
             <button
               onClick={deleteSelected}
-              className="bg-red-600 text-white px-3 py-1.5 rounded-lg"
+              className="bg-red-600 text-white px-3 py-1.5 rounded-lg text-xs md:text-base cursor-pointer hover:bg-red-700"
             >
               Delete
             </button>
@@ -94,7 +94,7 @@ const TransactionTableDetails = () => {
             {selectedRows.length === 1 && (
               <button
                 onClick={() => editTransaction(selectedRows[0])}
-                className="sm:hidden bg-green-600 text-white px-3 py-1.5 rounded-lg"
+                className="sm:hidden bg-green-600 text-white px-3 py-1.5 rounded-lg text-xs md:text-base cursor-pointer hover:bg-green-700"
               >
                 Edit
               </button>

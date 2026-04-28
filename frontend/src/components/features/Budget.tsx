@@ -80,7 +80,7 @@ const Budget = () => {
         <div className="flex items-start gap-2">
           <LuTrendingUp className="text-green-500 mt-1" size={22} />
           <div>
-            <h1 className="text-base sm:text-lg lg:text-2xl font-semibold text-green-600">
+             <h1 className="text-lg sm:text-xl lg:text-2xl font-semibold text-green-700">
               Budget Overview
             </h1>
             <p className="text-xs sm:text-sm text-slate-500 mt-1">
@@ -90,7 +90,7 @@ const Budget = () => {
           </div>
         </div>
 
-        <div className="flex gap-2 justify-center">
+        <div className="flex md:gap-2 justify-start md:justify-center">
           <AddBudgetBtn />
           <AddGoalBtn />
         </div>
