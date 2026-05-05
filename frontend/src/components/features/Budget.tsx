@@ -12,7 +12,6 @@ import { RiArrowDropDownLine } from "react-icons/ri";
 
 import type { BudgetDataType } from "../../types/ApiDataTypes";
 import type { GoalType } from "../../types/ApiDataTypes";
-import Empty from "../../pages/Empty";
 import GoalCard from "../ui/cards/GoalCard";
 
 const Budget = () => {

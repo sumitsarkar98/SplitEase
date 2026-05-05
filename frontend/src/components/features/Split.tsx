@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { LuTrendingUp } from "react-icons/lu";
+import { MdDeleteOutline } from "react-icons/md";
 
 type Item = {
   name: string;
@@ -14,27 +15,45 @@ type Member = {
 type Result = {
   name: string;
   paid: number;
-  owes?: number;
-  balance?: number;
+  balance: number;
 };
 
 const Split = () => {
   const [items, setItems] = useState<Item[]>([{ name: "", amount: 0 }]);
   const [members, setMembers] = useState<Member[]>([{ name: "", paid: 0 }]);
   const [results, setResults] = useState<Result[]>([]);
+  const [settlements, setSettlements] = useState<string[]>([]);
   const [total, setTotal] = useState(0);
   const [perPerson, setPerPerson] = useState(0);
+
+  // =========================
+  // RESET RESULTS WHEN DATA CHANGES
+  // =========================
+  useEffect(() => {
+    setResults([]);
+    setSettlements([]);
+  }, [items, members]);
 
   // =========================
   // ITEM HANDLERS
   // =========================
   const addItem = () => {
-    setItems([...items, { name: "", amount: 0 }]);
+    setItems((prev) => [...prev, { name: "", amount: 0 }]);
+  };
+
+  const removeItem = (index: number) => {
+    setItems((prev) => prev.filter((_, i) => i !== index));
   };
 
   const updateItem = (index: number, field: keyof Item, value: string) => {
     const updated = [...items];
-    updated[index][field] = field === "amount" ? Number(value) : value;
+
+    if (field === "amount") {
+      updated[index].amount = Number(value) || 0;
+    } else {
+      updated[index].name = value;
+    }
+
     setItems(updated);
   };
 
@@ -42,12 +61,22 @@ const Split = () => {
   // MEMBER HANDLERS
   // =========================
   const addMember = () => {
-    setMembers([...members, { name: "", paid: 0 }]);
+    setMembers((prev) => [...prev, { name: "", paid: 0 }]);
+  };
+
+  const removeMember = (index: number) => {
+    setMembers((prev) => prev.filter((_, i) => i !== index));
   };
 
   const updateMember = (index: number, field: keyof Member, value: string) => {
     const updated = [...members];
-    updated[index][field] = field === "paid" ? Number(value) : value;
+
+    if (field === "paid") {
+      updated[index].paid = Number(value) || 0;
+    } else {
+      updated[index].name = value;
+    }
+
     setMembers(updated);
   };
 
@@ -55,24 +84,63 @@ const Split = () => {
   // CALCULATE
   // =========================
   const handleCalculate = () => {
-    const totalExpense = items.reduce((sum, item) => sum + item.amount, 0);
+    const validItems = items.filter((i) => i.amount > 0);
+    const validMembers = members.filter((m) => m.name.trim());
 
-    const splitAmount = members.length > 0 ? totalExpense / members.length : 0;
+    if (validMembers.length < 2) {
+      alert("Add at least 2 members");
+      return;
+    }
 
-    const output: Result[] = members.map((m) => {
-      const balance = m.paid - splitAmount;
+    const totalExpense = validItems.reduce((sum, item) => sum + item.amount, 0);
+    const splitAmount = totalExpense / validMembers.length;
 
-      return {
-        name: m.name || "Unnamed",
-        paid: m.paid,
-        owes: splitAmount,
-        balance,
-      };
-    });
+    const balances = validMembers.map((m) => ({
+      name: m.name,
+      paid: m.paid,
+      balance: m.paid - splitAmount,
+    }));
 
+    // =========================
+    // SETTLEMENT LOGIC
+    // =========================
+    const creditors = balances
+      .filter((b) => b.balance > 0)
+      .map((b) => ({ ...b }));
+
+    const debtors = balances
+      .filter((b) => b.balance < 0)
+      .map((b) => ({ ...b }));
+
+    const settlementList: string[] = [];
+
+    let i = 0,
+      j = 0;
+
+    while (i < debtors.length && j < creditors.length) {
+      const debt = Math.abs(debtors[i].balance);
+      const credit = creditors[j].balance;
+
+      const amount = Math.min(debt, credit);
+
+      settlementList.push(
+        `${debtors[i].name} pays ₹${amount.toFixed(2)} to ${creditors[j].name}`,
+      );
+
+      debtors[i].balance += amount;
+      creditors[j].balance -= amount;
+
+      if (Math.abs(debtors[i].balance) < 0.01) i++;
+      if (Math.abs(creditors[j].balance) < 0.01) j++;
+    }
+
+    // =========================
+    // SET STATE
+    // =========================
     setTotal(totalExpense);
     setPerPerson(splitAmount);
-    setResults(output);
+    setResults(balances);
+    setSettlements(settlementList);
   };
 
   return (
@@ -92,7 +160,7 @@ const Split = () => {
         <h2 className="font-semibold">Expense Items</h2>
 
         {items.map((item, i) => (
-          <div key={i} className="flex gap-2">
+          <div key={i} className="flex gap-2 items-center">
             <input
               placeholder="Item name"
               value={item.name}
@@ -106,6 +174,12 @@ const Split = () => {
               onChange={(e) => updateItem(i, "amount", e.target.value)}
               className="border p-2 rounded w-1/2"
             />
+
+            {items.length > 1 && (
+              <button onClick={() => removeItem(i)}>
+                <MdDeleteOutline className="text-red-500 cursor-pointer" />
+              </button>
+            )}
           </div>
         ))}
 
@@ -119,7 +193,7 @@ const Split = () => {
         <h2 className="font-semibold">Members</h2>
 
         {members.map((m, i) => (
-          <div key={i} className="flex gap-2">
+          <div key={i} className="flex gap-2 items-center">
             <input
               placeholder="Name"
               value={m.name}
@@ -133,6 +207,12 @@ const Split = () => {
               onChange={(e) => updateMember(i, "paid", e.target.value)}
               className="border p-2 rounded w-1/2"
             />
+
+            {members.length > 1 && (
+              <button onClick={() => removeMember(i)}>
+                <MdDeleteOutline className="text-red-500 cursor-pointer" />
+              </button>
+            )}
           </div>
         ))}
 
@@ -141,7 +221,7 @@ const Split = () => {
         </button>
       </div>
 
-      {/* CALCULATE BUTTON */}
+      {/* CALCULATE */}
       <button
         onClick={handleCalculate}
         className="bg-green-600 text-white px-4 py-2 rounded"
@@ -173,6 +253,19 @@ const Split = () => {
               </div>
             ))}
           </div>
+        </div>
+      )}
+
+      {/* SETTLEMENTS */}
+      {settlements.length > 0 && (
+        <div className="bg-white p-4 rounded shadow space-y-2">
+          <h3 className="font-semibold text-slate-700">Settlements</h3>
+
+          {settlements.map((s, i) => (
+            <p key={i} className="text-sm text-slate-600">
+              {s}
+            </p>
+          ))}
         </div>
       )}
     </div>
