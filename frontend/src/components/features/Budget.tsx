@@ -3,19 +3,27 @@ import AddBudgetBtn from "../ui/buttons/AddBudgetBtn";
 import AddGoalBtn from "../ui/buttons/AddGoalBtn";
 import BudgetCard from "../ui/cards/BudgetCard";
 
-import { useBudgets } from "../../HOOKS/budgets/useBudgets";
-import { useGoals } from "../../HOOKS/budgets/useGoals";
+import { useBudgets, useDeleteBudget } from "../../HOOKS/budgets/useBudgets";
+import { useGoals, useDeleteGoal } from "../../HOOKS/budgets/useGoals";
 
 import { LuTrendingUp } from "react-icons/lu";
 import { HiOutlineSquaresPlus } from "react-icons/hi2";
 import { RiArrowDropDownLine } from "react-icons/ri";
 
 import type { BudgetDataType } from "../../types/ApiDataTypes";
+import type { GoalType } from "../../types/ApiDataTypes";
+import Empty from "../../pages/Empty";
+import GoalCard from "../ui/cards/GoalCard";
 
 const Budget = () => {
   const [viewAll, setViewAll] = useState(false);
   const currentMonth = new Date().getMonth() + 1;
 
+  // DELETE HOOKS
+  const { mutate: deleteBudget } = useDeleteBudget();
+  const { mutate: deleteGoal } = useDeleteGoal();
+
+  // FETCH DATA
   const {
     data: budgets = [],
     isLoading: budgetLoading,
@@ -50,15 +58,17 @@ const Budget = () => {
     limit: Number(b.budgetLimit),
     spent: Number(b.spent),
     status: b.status,
+    month: b.month,
+    year: b.year,
   }));
-  console.log("budgets:", formattedBudgets);
 
-  const formattedGoals: BudgetDataType[] = goals.map((g: any) => ({
+  const formattedGoals: GoalType[] = goals.map((g: any) => ({
     id: g.id,
-    category: g.title,
-    limit: g.targetAmount,
-    spent: g.savedAmount,
+    title: g.title,
+    targetAmount: Number(g.targetAmount ?? 0),
+    savedAmount: Number(g.savedAmount ?? 0),
     status: g.status,
+    targetDate: g.targetDate,
   }));
 
   /* ================= UI ================= */
@@ -80,7 +90,7 @@ const Budget = () => {
         <div className="flex items-start gap-2">
           <LuTrendingUp className="text-green-500 mt-1" size={22} />
           <div>
-             <h1 className="text-lg sm:text-xl lg:text-2xl font-semibold text-green-700">
+            <h1 className="text-lg sm:text-xl lg:text-2xl font-semibold text-green-700">
               Budget Overview
             </h1>
             <p className="text-xs sm:text-sm text-slate-500 mt-1">
@@ -90,7 +100,7 @@ const Budget = () => {
           </div>
         </div>
 
-        <div className="flex md:gap-2 justify-start md:justify-center">
+        <div className="flex md:gap-2">
           <AddBudgetBtn />
           <AddGoalBtn />
         </div>
@@ -99,18 +109,19 @@ const Budget = () => {
       {/* ===== BUDGET LIST ===== */}
       <section>
         <div className="flex justify-between items-center mb-4 px-2 md:px-0">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 md:gap-2">
             <HiOutlineSquaresPlus size={22} className="text-green-600" />
             <h2 className="text-lg md:text-xl text-slate-600 font-semibold">
               Monthly Budgets
             </h2>
           </div>
 
+          {/* FIXED toggle */}
           <button
-            onClick={() => setViewAll(true)}
+            onClick={() => setViewAll((prev) => !prev)}
             className="flex items-center border rounded-lg px-2 text-xs text-green-600 hover:text-green-700"
           >
-            <span>view all</span>
+            <span>{viewAll ? "show less" : "view all"}</span>
             <RiArrowDropDownLine size={20} />
           </button>
         </div>
@@ -118,10 +129,28 @@ const Budget = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-2 md:px-0">
           {formattedBudgets.length > 0 ? (
             formattedBudgets.map((item) => (
-              <BudgetCard key={item.id} item={item} type="budget" />
+              <BudgetCard
+                key={item.id}
+                item={item}
+                onDelete={(id) => deleteBudget(id)}
+              />
             ))
           ) : (
-            <p className="text-sm text-slate-400">No budgets found</p>
+            <div className="col-span-full flex justify-center">
+              <div
+                className="w-full max-w-md 
+        border-2 border-dashed border-slate-300 
+        rounded-xl p-6 
+        flex flex-col items-center justify-center gap-3
+        text-center bg-slate-50 hover:border-green-400 hover:bg-green-50 transition"
+              >
+                <p className="text-sm text-slate-500">
+                  No budgets yet for this month
+                </p>
+
+                <AddBudgetBtn />
+              </div>
+            </div>
           )}
         </div>
       </section>
@@ -129,7 +158,7 @@ const Budget = () => {
       {/* ===== GOALS LIST ===== */}
       <section>
         <div className="flex justify-between items-center mb-4 px-2 md:px-0">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 md:gap-2">
             <HiOutlineSquaresPlus size={22} className="text-green-600" />
             <h2 className="text-lg md:text-xl text-slate-600 font-semibold">
               My Goals
@@ -140,10 +169,27 @@ const Budget = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-2 md:px-0">
           {formattedGoals.length > 0 ? (
             formattedGoals.map((item) => (
-              <BudgetCard key={item.id} item={item} type="goal" />
+              <GoalCard
+                key={item.id}
+                item={item}
+                onDelete={(id) => deleteGoal(id)}
+              />
             ))
           ) : (
-            <p className="text-sm text-slate-400">No goals found</p>
+            <div className="col-span-full flex justify-center">
+              <div
+                className="w-full max-w-md 
+        border-2 border-dashed border-slate-300 
+        rounded-xl p-6 
+        flex flex-col items-center justify-center gap-3
+        text-center bg-slate-50
+        hover:border-amber-400 hover:bg-amber-50 transition"
+              >
+                <p className="text-sm text-slate-500">No goals yet</p>
+
+                <AddGoalBtn />
+              </div>
+            </div>
           )}
         </div>
       </section>

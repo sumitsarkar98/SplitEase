@@ -1,19 +1,23 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Box, Modal } from "@mui/material";
-import { FiX } from "react-icons/fi";
-import type { BudgetDataType } from "../../../types/ApiDataTypes";
-
-import { LuWallet } from "react-icons/lu";
+import { FiX, FiTarget } from "react-icons/fi";
+import { HiCheckCircle } from "react-icons/hi2";
 import { FaRegEdit } from "react-icons/fa";
 import { MdDeleteOutline } from "react-icons/md";
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { updateBudget } from "../../../API/budget.api";
+import { useUpdateGoal } from "../../../HOOKS/budgets/useGoals";
 
-type BudgetItem = BudgetDataType & { month?: number; year?: number };
+export interface GoalType {
+  id: number;
+  title: string;
+  targetAmount: number;
+  savedAmount: number;
+  status: string;
+  targetDate?: string | null;
+}
 
-interface BudgetCardProps {
-  item: BudgetItem;
+interface GoalCardProps {
+  item: GoalType;
   onDelete?: (id: number) => void;
 }
 
@@ -28,43 +32,32 @@ const style = {
   borderRadius: "10px",
 };
 
-const getMonthName = (month?: number) => {
-  if (!month) return "";
-  return new Date(2024, month - 1).toLocaleString("en-IN", {
-    month: "short",
-  });
-};
+const GoalCard = ({ item, onDelete }: GoalCardProps) => {
+  const { id, title, targetAmount, savedAmount, status, targetDate } = item;
 
-const BudgetCard = ({ item, onDelete }: BudgetCardProps) => {
-  const { category, limit, spent, status, id, month, year } = item;
+  const { mutate: update, isPending } = useUpdateGoal();
 
   const [open, setOpen] = useState(false);
 
   const [form, setForm] = useState({
-    budget_limit: item.limit,
-    month: item.month || 1,
+    target_amount: targetAmount,
+    saved_amount: savedAmount,
+    target_date: targetDate || "",
   });
 
-  const queryClient = useQueryClient();
-
-  const { mutate: update, isPending } = useMutation({
-    mutationFn: () =>
-      updateBudget(id, {
-        budget_limit: Number(form.budget_limit),
-        month: Number(form.month),
-      }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["budgets"] });
-      setOpen(false);
-    },
-  });
+  /* sync when item changes */
+  useEffect(() => {
+    setForm({
+      target_amount: targetAmount,
+      saved_amount: savedAmount,
+      target_date: targetDate || "",
+    });
+  }, [targetAmount, savedAmount, targetDate]);
 
   const percentage =
-    limit > 0 ? Math.min((Number(spent) / Number(limit)) * 100, 100) : 0;
+    targetAmount > 0 ? Math.min((savedAmount / targetAmount) * 100, 100) : 0;
 
-  let color = "bg-green-500";
-  if (status === "exceeded") color = "bg-red-500";
-  else if (percentage > 80) color = "bg-yellow-500";
+  const color = status === "completed" ? "bg-green-500" : "bg-amber-500";
 
   const handleDelete = () => {
     if (!onDelete) return;
@@ -73,34 +66,44 @@ const BudgetCard = ({ item, onDelete }: BudgetCardProps) => {
     }
   };
 
+  /*  FIXED SUBMIT */
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    update();
+
+    update({
+      id,
+      data: {
+        target_amount: Number(form.target_amount) || 0,
+        saved_amount: Number(form.saved_amount) || 0,
+        target_date: form.target_date ? form.target_date : null,
+      },
+    });
+
+    setOpen(false);
   };
 
   return (
     <>
+      {/* CARD */}
       <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm hover:shadow-md transition space-y-3">
-        {/* TOP */}
         <div className="flex justify-between items-center">
           <div>
-            <h2 className="text-sm font-semibold text-slate-700">{category}</h2>
+            <h2 className="text-sm font-semibold text-slate-700">{title}</h2>
 
-            {month && (
+            {targetDate && (
               <p className="text-[11px] text-slate-400">
-                {getMonthName(month)} {year}
+                Target: {new Date(targetDate).toLocaleDateString("en-IN")}
               </p>
             )}
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-medium bg-green-100 text-green-600">
-              <LuWallet size={12} />
-              Budget
+            <span className="flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-medium bg-amber-100 text-amber-600">
+              <FiTarget size={12} />
+              Goal
             </span>
 
             <div className="flex gap-1">
-              {/* EDIT */}
               <button
                 onClick={() => setOpen(true)}
                 className="text-slate-400 hover:text-green-600"
@@ -108,7 +111,6 @@ const BudgetCard = ({ item, onDelete }: BudgetCardProps) => {
                 <FaRegEdit size={14} />
               </button>
 
-              {/* DELETE */}
               <button
                 onClick={handleDelete}
                 className="text-slate-400 hover:text-red-600"
@@ -121,8 +123,8 @@ const BudgetCard = ({ item, onDelete }: BudgetCardProps) => {
 
         {/* AMOUNT */}
         <div className="flex justify-between text-xs text-slate-500">
-          <span>₹{spent}</span>
-          <span>₹{limit}</span>
+          <span>₹{savedAmount}</span>
+          <span>₹{targetAmount}</span>
         </div>
 
         {/* PROGRESS */}
@@ -132,8 +134,21 @@ const BudgetCard = ({ item, onDelete }: BudgetCardProps) => {
             style={{ width: `${percentage}%` }}
           />
         </div>
+
+        {/* FOOTER */}
+        <div className="flex justify-between text-xs">
+          <span className="text-slate-500">{percentage.toFixed(0)}% saved</span>
+
+          {status === "completed" && (
+            <span className="flex items-center gap-1 text-green-500 font-medium">
+              <HiCheckCircle size={14} />
+              Completed
+            </span>
+          )}
+        </div>
       </div>
 
+      {/* MODAL */}
       {/* MODAL */}
       <Modal open={open} onClose={() => setOpen(false)}>
         <Box sx={style}>
@@ -144,17 +159,15 @@ const BudgetCard = ({ item, onDelete }: BudgetCardProps) => {
             <FiX />
           </button>
 
-          <h2 className="text-lg font-semibold mb-4 text-center">
-            Edit Budget
-          </h2>
+          <h2 className="text-lg font-semibold mb-4 text-center">Edit Goal</h2>
 
           <form onSubmit={handleSubmit} className="space-y-3">
-            {/* CATEGORY (READ ONLY) */}
+            {/* TITLE (READ ONLY) */}
             <div>
-              <label className="text-sm">Category</label>
+              <label className="block text-sm mb-1">Title</label>
               <input
                 type="text"
-                value={category}
+                value={title}
                 disabled
                 className="w-full border p-2 rounded bg-gray-100 cursor-not-allowed"
               />
@@ -162,7 +175,7 @@ const BudgetCard = ({ item, onDelete }: BudgetCardProps) => {
 
             {/* STATUS (READ ONLY) */}
             <div>
-              <label className="text-sm">Status</label>
+              <label className="block text-sm mb-1">Status</label>
               <input
                 type="text"
                 value={status}
@@ -171,33 +184,50 @@ const BudgetCard = ({ item, onDelete }: BudgetCardProps) => {
               />
             </div>
 
-            {/* MONTH + YEAR (READ ONLY) */}
+            {/* TARGET AMOUNT (EDITABLE) */}
             <div>
-              <label className="text-sm">Month</label>
-              <input
-                type="text"
-                value={`${getMonthName(month)} ${year}`}
-                disabled
-                className="w-full border p-2 rounded bg-gray-100 cursor-not-allowed"
-              />
-            </div>
-
-            {/* ONLY EDITABLE FIELD */}
-            <div>
-              <label className="text-sm">Budget Limit</label>
+              <label className="block text-sm mb-1">Target Amount</label>
               <input
                 type="number"
-                value={form.budget_limit}
+                value={form.target_amount}
                 onChange={(e) =>
                   setForm((p) => ({
                     ...p,
-                    budget_limit: Number(e.target.value),
+                    target_amount: Number(e.target.value),
                   }))
                 }
                 className="w-full border p-2 rounded"
               />
             </div>
 
+            {/* SAVED AMOUNT (READ ONLY) */}
+            <div>
+              <label className="block text-sm mb-1">Saved Amount</label>
+              <input
+                type="number"
+                value={form.saved_amount}
+                disabled
+                className="w-full border p-2 rounded bg-gray-100 cursor-not-allowed"
+              />
+            </div>
+
+            {/* TARGET DATE (EDITABLE) */}
+            <div>
+              <label className="block text-sm mb-1">Target Date</label>
+              <input
+                type="date"
+                value={form.target_date?.slice(0, 10) || ""}
+                onChange={(e) =>
+                  setForm((p) => ({
+                    ...p,
+                    target_date: e.target.value,
+                  }))
+                }
+                className="w-full border p-2 rounded"
+              />
+            </div>
+
+            {/* SUBMIT */}
             <button
               type="submit"
               disabled={isPending}
@@ -212,4 +242,4 @@ const BudgetCard = ({ item, onDelete }: BudgetCardProps) => {
   );
 };
 
-export default BudgetCard;
+export default GoalCard;

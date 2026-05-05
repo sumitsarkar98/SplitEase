@@ -37,9 +37,9 @@ const Transactions = () => {
           <AddTransactionBtn />
         </div>
       </section>
-      
+
       {/* ===== SECTION-3 (TABLE CARD) ===== */}
-      <section className="bg-white rounded-xl border border-slate-200 shadow-sm px-3 py-5 sm:px-5 md:px-6 md:py-6">
+      <section className="bg-white rounded-xl border border-slate-200 shadow-sm px-2 py-5 sm:px-5 md:px-6 md:py-6">
         {/* HEADER */}
         <div className="flex flex-col items-start lg:flex-row lg:items-center lg:justify-between mb-4 md:mb-2">
           <div className="flex items-center gap-2 text-green-600 ">

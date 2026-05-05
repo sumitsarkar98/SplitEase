@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { fetchBudgets, addBudget } from "../../API/budget.api";
+import { fetchBudgets, addBudget, deleteBudget } from "../../API/budget.api";
 
 // GET budgets
 export const useBudgets = (month?: number, viewAll?: boolean) => {
@@ -11,6 +11,7 @@ export const useBudgets = (month?: number, viewAll?: boolean) => {
     },
   });
 };
+
 // CREATE budget
 export const useCreateBudget = () => {
   const queryClient = useQueryClient();
@@ -26,6 +27,26 @@ export const useCreateBudget = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["budgets"] });
+    },
+  });
+};
+
+// DELETE budget
+export const useDeleteBudget = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: number) => {
+      await deleteBudget(id);
+    },
+
+    onSuccess: () => {
+      // refresh budgets
+      queryClient.invalidateQueries({ queryKey: ["budgets"] });
+    },
+
+    onError: (error) => {
+      console.error("Delete budget failed:", error);
     },
   });
 };

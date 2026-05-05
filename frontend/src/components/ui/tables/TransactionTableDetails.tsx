@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { MdFileDownload } from "react-icons/md";
-import { FaRegEdit } from "react-icons/fa";
 import { useTransactions } from "../../../HOOKS/transaction/useTransactions";
+import EditTBtn from "../buttons/EditTransactionBtn";
+import DeleteTBtn from "../buttons/DeleteTransactionBtn";
 
 const TransactionTableDetails = () => {
   const [period, setPeriod] = useState<"weekly" | "monthly" | "yearly">(
@@ -12,6 +13,13 @@ const TransactionTableDetails = () => {
   const { data = [], isLoading, isError } = useTransactions(period, type);
 
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
+  const clearSelection = () => setSelectedRows([]);
+
+  useEffect(() => {
+    setSelectedRows((prev) =>
+      prev.filter((id) => data.some((txn: any) => txn.id === id)),
+    );
+  }, [data]);
 
   const toggleRow = (id: number) => {
     setSelectedRows((prev) =>
@@ -27,81 +35,59 @@ const TransactionTableDetails = () => {
     }
   };
 
-  const editTransaction = (id: number) => {
-    alert("Open edit modal for ID: " + id);
-  };
-
-  const deleteSelected = () => {
-    // Replace with API later
-    alert("Delete API call with IDs: " + selectedRows.join(","));
-    setSelectedRows([]);
-  };
-
-  //  loading & error
   if (isLoading) return <div className="p-4">Loading...</div>;
   if (isError)
     return <div className="p-4 text-red-500">Error loading data</div>;
 
   return (
     <div className="w-full">
-      {/* HEADER */}
-      <section className="flex items-center justify-between md:justify-end md:gap-2">
-        <select
-          value={type}
-          onChange={(e) =>
-            setType(e.target.value as "all" | "income" | "expense")
-          }
-          className="border rounded-lg px-2 py-1 text-xs hover:bg-slate-50 cursor-pointer"
-        >
-          <option value="all">All Type</option>
-          <option value="income">Income</option>
-          <option value="expense">Expense</option>
-        </select>
+      <section className="flex flex-col md:flex-row md:justify-between my-4">
+        {/* FILTERS */}
+        <div className="flex items-center justify-between md:gap-2">
+          <select
+            value={type}
+            onChange={(e) => setType(e.target.value as any)}
+            className="border rounded-lg px-2 py-1 text-xs hover:bg-slate-50 cursor-pointer"
+          >
+            <option value="all">All Type</option>
+            <option value="income">Income</option>
+            <option value="expense">Expense</option>
+          </select>
 
-        <select
-          value={period}
-          onChange={(e) =>
-            setPeriod(e.target.value as "weekly" | "monthly" | "yearly")
-          }
-          className="border rounded-lg px-2 py-1 text-xs hover:bg-slate-50 cursor-pointer"
-        >
-          <option value="weekly">This Week</option>
-          <option value="monthly">This Month</option>
-          <option value="yearly">This Year</option>
-        </select>
+          <select
+            value={period}
+            onChange={(e) => setPeriod(e.target.value as any)}
+            className="border rounded-lg px-2 py-1 text-xs hover:bg-slate-50 cursor-pointer"
+          >
+            <option value="weekly">This Week</option>
+            <option value="monthly">This Month</option>
+            <option value="yearly">This Year</option>
+          </select>
 
-        <button className="flex items-center gap-1 border px-2 py-1 rounded-lg hover:bg-slate-50 cursor-pointer">
-          <MdFileDownload size={18} />
-          <span className="text-xs">Export</span>
-        </button>
+          <button className="flex items-center gap-1 border px-2 py-1 rounded-lg hover:bg-slate-50 cursor-pointer">
+            <MdFileDownload size={18} />
+            <span className="text-xs">Export</span>
+          </button>
+        </div>
+
+        {/* ACTION BAR */}
+        {selectedRows.length > 0 && (
+          <section className="flex justify-end items-center gap-2 mt-3 md:mt-0">
+            <span className="text-xs text-slate-500">
+              {selectedRows.length} selected
+            </span>
+
+            <div className="flex gap-2">
+              <DeleteTBtn ids={selectedRows} clearSelection={clearSelection} />
+              {selectedRows.length === 1 && (
+                <EditTBtn
+                  txn={data.find((t: any) => t.id === selectedRows[0])}
+                />
+              )}
+            </div>
+          </section>
+        )}
       </section>
-
-      {/* ACTION BAR */}
-      {selectedRows.length > 0 && (
-        <section className="mt-4 flex justify-end items-center gap-2">
-          <span className="text-xs text-slate-500">
-            {selectedRows.length} selected
-          </span>
-
-          <div className="flex gap-2">
-            <button
-              onClick={deleteSelected}
-              className="bg-red-600 text-white px-3 py-1.5 rounded-lg text-xs md:text-base cursor-pointer hover:bg-red-700"
-            >
-              Delete
-            </button>
-
-            {selectedRows.length === 1 && (
-              <button
-                onClick={() => editTransaction(selectedRows[0])}
-                className="sm:hidden bg-green-600 text-white px-3 py-1.5 rounded-lg text-xs md:text-base cursor-pointer hover:bg-green-700"
-              >
-                Edit
-              </button>
-            )}
-          </div>
-        </section>
-      )}
 
       {/* TABLE */}
       <section className="overflow-hidden mt-3">
@@ -117,19 +103,23 @@ const TransactionTableDetails = () => {
                   onChange={toggleSelectAll}
                 />
               </th>
+
               <th className="text-left p-2">Date</th>
               <th className="text-left p-2">Category</th>
+
+              {/* Desktop only */}
               <th className="hidden sm:table-cell text-left p-2">
                 Description
               </th>
+
               <th className="text-right p-2">Amount</th>
-              <th className="hidden sm:table-cell text-center p-2">Edit</th>
             </tr>
           </thead>
 
           <tbody>
             {data.map((txn: any) => (
               <tr key={txn.id} className="border-b hover:bg-slate-100">
+                {/* CHECKBOX */}
                 <td className="p-2">
                   <input
                     type="checkbox"
@@ -138,6 +128,7 @@ const TransactionTableDetails = () => {
                   />
                 </td>
 
+                {/* DATE */}
                 <td className="p-2">
                   {new Date(txn.transaction_date).toLocaleDateString("en-IN", {
                     day: "2-digit",
@@ -145,10 +136,13 @@ const TransactionTableDetails = () => {
                   })}
                 </td>
 
-                <td className="p-2 font-medium">{txn.category}</td>
+                {/* CATEGORY */}
+                <td className="p-2 font-medium">{txn.category || "—"}</td>
 
-                <td className="hidden sm:table-cell p-2">{txn.note}</td>
+                {/* DESCRIPTION (DESKTOP ONLY) */}
+                <td className="hidden sm:table-cell p-2">{txn.note || "—"}</td>
 
+                {/* AMOUNT */}
                 <td
                   className={`p-2 text-right font-semibold ${
                     txn.type === "income" ? "text-green-600" : "text-red-600"
@@ -156,15 +150,6 @@ const TransactionTableDetails = () => {
                 >
                   {txn.type === "income" ? "+" : "-"}
                   {txn.amount}
-                </td>
-
-                <td className="hidden sm:table-cell text-center">
-                  <button
-                    onClick={() => editTransaction(txn.id)}
-                    className="text-slate-500 hover:text-green-600"
-                  >
-                    <FaRegEdit />
-                  </button>
                 </td>
               </tr>
             ))}

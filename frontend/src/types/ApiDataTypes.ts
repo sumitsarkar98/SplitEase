@@ -41,3 +41,12 @@ export interface RecentIncomeType {
   note: string;
   date: string;
 }
+
+export type GoalType = {
+  id: number;
+  title: string;
+  targetAmount: number;
+  savedAmount: number;
+  status: string;
+  targetDate?: string | null;
+};
