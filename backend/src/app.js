@@ -7,6 +7,7 @@ import dashboardRoutes from "./routes/dashboard.routes.js";
 import transactionRoutes from "./routes/transactions.routes.js";
 import budgetRoutes from "./routes/budgets.routes.js";
 import goalRoutes from "./routes/goal.routes.js";
+import baseRoutes from "./routes/base.routes.js";
 
 const app = express();
 
@@ -25,6 +26,9 @@ app.use((req, res, next) => {
   console.log(`[${req.method}] ${req.path}`);
   next();
 });
+
+// basic routes
+app.use("/api/v1/base", baseRoutes);
 
 // auth Routes
 app.use("/api/v1/auth", userRoutes);

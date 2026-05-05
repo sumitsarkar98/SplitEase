@@ -72,8 +72,12 @@ const updateGoal = asyncHandler(async (req, res) => {
   const userId = req.user?.id || 1;
   const { goalId } = req.params;
 
+  console.log("🆔 Goal ID:", goalId);
+  console.log("📥 Incoming body:", req.body);
+
   const { title, target_amount, saved_amount, target_date } = req.body;
 
+  // 🔍 Fetch existing goal
   const [rows] = await pool.execute(
     `SELECT * FROM goals WHERE id = ? AND user_id = ?`,
     [goalId, userId],
@@ -85,44 +89,74 @@ const updateGoal = asyncHandler(async (req, res) => {
 
   const existing = rows[0];
 
-  const updatedData = {
-    title: title ?? existing.title,
-    target_amount: target_amount ?? existing.target_amount,
-    saved_amount: saved_amount ?? existing.saved_amount,
-    target_date: target_date ?? existing.target_date,
+  // 🛠️ Format date safely for MySQL (YYYY-MM-DD)
+  const formatDate = (date) => {
+    if (!date) return null;
+
+    const d = new Date(date);
+    if (isNaN(d.getTime())) return existing.target_date; // invalid date fallback
+
+    return d.toISOString().split("T")[0];
   };
 
-  const [result] = await pool.execute(
-    `
-    UPDATE goals 
-    SET 
-      title = ?, 
-      target_amount = ?, 
-      saved_amount = ?, 
-      target_date = ?
-    WHERE id = ? AND user_id = ?
-    `,
-    [
-      updatedData.title,
-      updatedData.target_amount,
-      updatedData.saved_amount,
-      updatedData.target_date,
-      goalId,
-      userId,
-    ],
-  );
+  // 🧠 Prepare safe updated data
+  const updatedData = {
+    title: title ?? existing.title,
 
-  if (result.affectedRows === 0) {
-    throw new ApiError(500, "Failed to update goal");
+    target_amount:
+      target_amount !== undefined && !isNaN(Number(target_amount))
+        ? Number(target_amount)
+        : existing.target_amount,
+
+    // ⚠️ Only update if provided (optional)
+    saved_amount:
+      saved_amount !== undefined && !isNaN(Number(saved_amount))
+        ? Number(saved_amount)
+        : existing.saved_amount,
+
+    target_date:
+      target_date === "" || target_date === undefined
+        ? null
+        : formatDate(target_date),
+  };
+
+  console.log("📦 FINAL UPDATE DATA:", updatedData);
+
+  try {
+    const [result] = await pool.execute(
+      `
+      UPDATE goals 
+      SET 
+        title = ?, 
+        target_amount = ?, 
+        saved_amount = ?, 
+        target_date = ?
+      WHERE id = ? AND user_id = ?
+      `,
+      [
+        updatedData.title,
+        updatedData.target_amount,
+        updatedData.saved_amount,
+        updatedData.target_date,
+        goalId,
+        userId,
+      ],
+    );
+
+    if (result.affectedRows === 0) {
+      throw new ApiError(500, "Failed to update goal");
+    }
+
+    return res.status(200).json(
+      new ApiResponse("Goal updated successfully", {
+        id: Number(goalId),
+      }),
+    );
+  } catch (err) {
+    console.error("DB ERROR:", err);
+    throw new ApiError(500, "Database update failed");
   }
-
-  return res.status(200).json(
-    new ApiResponse("Goal updated successfully", {
-      id: Number(goalId),
-    }),
-  );
 });
-
 // DELETE GOAL
 const deleteGoal = asyncHandler(async (req, res) => {
   const userId = req.user?.id || 1;

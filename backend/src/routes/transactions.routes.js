@@ -13,7 +13,7 @@ const router = express.Router();
 
 router.post("/", newTransaction);
 router.get("/", periodMiddleware, getAllTransactions);
-router.put("/:transactionId", editTransaction);
+router.patch("/:transactionId", editTransaction);
 router.delete("/:transactionId", deleteTransaction);
 
 export default router;
