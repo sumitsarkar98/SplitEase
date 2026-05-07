@@ -117,7 +117,7 @@ export default function CustomPieCharts({ data, category }: PieChartProps) {
     name: item.title || "Unknown",
     value: Number(item.total) || 0,
   }));
-  console.log("PIE DATA:", chartData);
+  //  console.log("PIE DATA:", chartData);
 
   // ===== COLORS =====
   const COLORS =

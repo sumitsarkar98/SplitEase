@@ -4,6 +4,7 @@ import Modal from "@mui/material/Modal";
 import { FiPlus, FiX } from "react-icons/fi";
 import { useAddTransaction } from "../../../HOOKS/transaction/useAddTransaction";
 import { useGetCategories } from "../../../HOOKS/others/useGetCategories";
+import { useGoals } from "../../../HOOKS/budgets/useGoals";
 
 const style = {
   position: "absolute",
@@ -19,12 +20,6 @@ const style = {
   maxHeight: "90vh",
   overflowY: "auto",
 };
-
-// TEMP goals (replace later with API)
-const goals = [
-  { id: 1, name: "Emergency Fund" },
-  { id: 2, name: "Trip" },
-];
 
 const AddTransactionBtn = () => {
   const [open, setOpen] = useState(false);
@@ -53,15 +48,23 @@ const AddTransactionBtn = () => {
 
   // Filter categories dynamically
   const incomeCategories = categories.filter((c: any) => c.type === "income");
-  // console.log(`income category ${incomeCategories}`);
+
+  // console.log("income category:", incomeCategories);
 
   const expenseCategories = categories.filter((c: any) => c.type === "expense");
-  // console.log(`expense category ${expenseCategories}`);
+  // console.log("expense category:", expenseCategories);
+
+  const { data: goals = [] } = useGoals();
+  // console.log("goal category:", goals);
 
   const getOptions = () => {
     if (formInput.type === "income") return incomeCategories;
+
     if (formInput.type === "expense") return expenseCategories;
-    return goals;
+
+    if (formInput.type === "goal") return goals.length > 0 ? goals : [];
+
+    return [];
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -85,10 +88,14 @@ const AddTransactionBtn = () => {
       note: formInput.description,
 
       category_id:
-        formInput.type === "expense" ? Number(formInput.category) : null,
+        formInput.type === "income" || formInput.type === "expense"
+          ? Number(formInput.category)
+          : null,
 
       goal_id: formInput.type === "goal" ? Number(formInput.category) : null,
     };
+
+    console.log("payload data:", payload);
 
     mutate(payload, {
       onSuccess: () => {

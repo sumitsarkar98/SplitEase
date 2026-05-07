@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { MdFileDownload } from "react-icons/md";
 import { useTransactions } from "../../../HOOKS/transaction/useTransactions";
 import EditTBtn from "../buttons/EditTransactionBtn";
 import DeleteTBtn from "../buttons/DeleteTransactionBtn";
+import { useGetCategories } from "../../../HOOKS/others/useGetCategories";
 
 const TransactionTableDetails = () => {
   const [period, setPeriod] = useState<"weekly" | "monthly" | "yearly">(
@@ -11,10 +12,25 @@ const TransactionTableDetails = () => {
   const [type, setType] = useState<"all" | "income" | "expense">("all");
 
   const { data = [], isLoading, isError } = useTransactions(period, type);
+  const { data: categories = [], isLoading: isCategoriesLoading } =
+    useGetCategories();
+
+  // safer category map (string keys)
+  const categoryMap = useMemo(() => {
+    const map: Record<string, string> = {};
+
+    categories.forEach((cat: any) => {
+      map[String(cat.id)] = cat.title;
+    });
+
+    return map;
+  }, [categories]);
 
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
+
   const clearSelection = () => setSelectedRows([]);
 
+  // remove deleted rows from selection
   useEffect(() => {
     setSelectedRows((prev) =>
       prev.filter((id) => data.some((txn: any) => txn.id === id)),
@@ -27,8 +43,10 @@ const TransactionTableDetails = () => {
     );
   };
 
+  const allSelected = data.length > 0 && selectedRows.length === data.length;
+
   const toggleSelectAll = () => {
-    if (selectedRows.length === data.length) {
+    if (allSelected) {
       setSelectedRows([]);
     } else {
       setSelectedRows(data.map((txn: any) => txn.id));
@@ -41,8 +59,8 @@ const TransactionTableDetails = () => {
 
   return (
     <div className="w-full">
+      {/* FILTERS + ACTIONS */}
       <section className="flex flex-col md:flex-row md:justify-between my-4">
-        {/* FILTERS */}
         <div className="flex items-center justify-between md:gap-2">
           <select
             value={type}
@@ -79,6 +97,7 @@ const TransactionTableDetails = () => {
 
             <div className="flex gap-2">
               <DeleteTBtn ids={selectedRows} clearSelection={clearSelection} />
+
               {selectedRows.length === 1 && (
                 <EditTBtn
                   txn={data.find((t: any) => t.id === selectedRows[0])}
@@ -97,9 +116,7 @@ const TransactionTableDetails = () => {
               <th className="p-2 text-left">
                 <input
                   type="checkbox"
-                  checked={
-                    selectedRows.length === data.length && data.length > 0
-                  }
+                  checked={allSelected}
                   onChange={toggleSelectAll}
                 />
               </th>
@@ -107,7 +124,6 @@ const TransactionTableDetails = () => {
               <th className="text-left p-2">Date</th>
               <th className="text-left p-2">Category</th>
 
-              {/* Desktop only */}
               <th className="hidden sm:table-cell text-left p-2">
                 Description
               </th>
@@ -137,9 +153,13 @@ const TransactionTableDetails = () => {
                 </td>
 
                 {/* CATEGORY */}
-                <td className="p-2 font-medium">{txn.category || "—"}</td>
+                <td className="p-2 font-medium">
+                  {isCategoriesLoading
+                    ? "Loading..."
+                    : categoryMap[String(txn.category_id)] || "goal"}
+                </td>
 
-                {/* DESCRIPTION (DESKTOP ONLY) */}
+                {/* DESCRIPTION */}
                 <td className="hidden sm:table-cell p-2">{txn.note || "—"}</td>
 
                 {/* AMOUNT */}

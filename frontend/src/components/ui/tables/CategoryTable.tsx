@@ -1,48 +1,16 @@
-import type { CategoryExpenseTypes } from "../../../types/ApiDataTypes";
-
-const categoryData: CategoryExpenseTypes[] = [
-  {
-    title: "Food",
-    total_expense: 3100.0,
-    percentage: 20,
-  },
-  {
-    title: "Transport",
-    total_expense: 1200.0,
-    percentage: 20,
-  },
-  {
-    title: "Shopping",
-    total_expense: 6000.0,
-    percentage: 20,
-  },
-  {
-    title: "Bills",
-    total_expense: 2000.0,
-    percentage: 20,
-  },
-  {
-    title: "Housing",
-    total_expense: 8000.0,
-    percentage: 20,
-  },
-  {
-    title: "Health",
-    total_expense: 1700.0,
-    percentage: 20,
-  },
-  {
-    title: "Entertainment",
-    total_expense: 1600.0,
-    percentage: 20,
-  },
-];
+import { useCategoryExpense } from "../../../HOOKS/others/useCategoryExpense";
 
 const CategoryTable = () => {
+  const { data = [], isLoading, isError } = useCategoryExpense();
+
+  if (isLoading) return <div className="p-4">Loading...</div>;
+  if (isError)
+    return <div className="p-4 text-red-500">Error loading data</div>;
+
   return (
     <div className="lg:p-2 flex justify-between items-center">
       <table className="w-full text-xs md:text-sm">
-        {/* ===== HEADER ===== */}
+        {/* HEADER */}
         <thead>
           <tr className="text-slate-500 bg-slate-100 border-b border-slate-300">
             <th className="text-left py-3 px-5 font-semibold rounded-tl-lg">
@@ -54,11 +22,11 @@ const CategoryTable = () => {
           </tr>
         </thead>
 
-        {/* ===== BODY ===== */}
+        {/* BODY */}
         <tbody>
-          {categoryData.map((item, index) => (
+          {data.map((item: any) => (
             <tr
-              key={index}
+              key={`${item.id}-${item.type}`}
               className="group border-b border-slate-100 hover:bg-slate-50 cursor-pointer transition"
             >
               {/* Category */}
@@ -67,8 +35,12 @@ const CategoryTable = () => {
               </td>
 
               {/* Amount */}
-              <td className="py-3 px-5 text-right font-medium text-slate-600">
-                ₹{item.total_expense.toLocaleString("en-IN")}
+              <td
+                className={`py-3 px-5 text-right font-medium ${
+                  item.type === "income" ? "text-green-600" : "text-red-600"
+                }`}
+              >
+                ₹ {Number(item.total_amount).toLocaleString("en-IN")}
               </td>
             </tr>
           ))}

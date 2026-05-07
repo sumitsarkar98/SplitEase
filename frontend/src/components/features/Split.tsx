@@ -26,17 +26,13 @@ const Split = () => {
   const [total, setTotal] = useState(0);
   const [perPerson, setPerPerson] = useState(0);
 
-  // =========================
-  // RESET RESULTS WHEN DATA CHANGES
-  // =========================
+  // ====== RESET RESULTS WHEN DATA CHANGES ======
   useEffect(() => {
     setResults([]);
     setSettlements([]);
   }, [items, members]);
 
-  // =========================
-  // ITEM HANDLERS
-  // =========================
+  // ======= ITEM HANDLERS =======
   const addItem = () => {
     setItems((prev) => [...prev, { name: "", amount: 0 }]);
   };
@@ -57,9 +53,7 @@ const Split = () => {
     setItems(updated);
   };
 
-  // =========================
-  // MEMBER HANDLERS
-  // =========================
+  // ======= MEMBER HANDLERS =======
   const addMember = () => {
     setMembers((prev) => [...prev, { name: "", paid: 0 }]);
   };
@@ -80,9 +74,7 @@ const Split = () => {
     setMembers(updated);
   };
 
-  // =========================
-  // CALCULATE
-  // =========================
+  // ========= CALCULATE =========
   const handleCalculate = () => {
     const validItems = items.filter((i) => i.amount > 0);
     const validMembers = members.filter((m) => m.name.trim());
@@ -101,9 +93,7 @@ const Split = () => {
       balance: m.paid - splitAmount,
     }));
 
-    // =========================
-    // SETTLEMENT LOGIC
-    // =========================
+    // ========== SETTLEMENT LOGIC ==========
     const creditors = balances
       .filter((b) => b.balance > 0)
       .map((b) => ({ ...b }));
@@ -134,9 +124,7 @@ const Split = () => {
       if (Math.abs(creditors[j].balance) < 0.01) j++;
     }
 
-    // =========================
-    // SET STATE
-    // =========================
+    // ========= SET STATE =========
     setTotal(totalExpense);
     setPerPerson(splitAmount);
     setResults(balances);

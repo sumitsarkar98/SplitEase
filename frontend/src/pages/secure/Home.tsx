@@ -5,8 +5,8 @@ import { IoIosSettings } from "react-icons/io";
 import CategoryTable from "../../components/ui/tables/CategoryTable";
 import { MdOutlineHistory } from "react-icons/md";
 import { PiInfo } from "react-icons/pi";
-import { CgInsights } from "react-icons/cg";
 import { FaMoneyBillTransfer } from "react-icons/fa6";
+import InsightCrad from "../../components/ui/cards/InsightCrad";
 
 const Home = () => {
   return (
@@ -121,54 +121,15 @@ const Home = () => {
 
             <span className="text-xs py-1 px-2 flex items-center gap-2 rounded-md text-slate-500 bg-slate-50 w-fit">
               <PiInfo className="shrink-0 text-green-500" />
-              Expenses stacked for this month
+              Transactions by category this month
             </span>
           </div>
           <div>
             <CategoryTable />
           </div>
         </section>
-        <section className="bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-md transition p-3">
-          {/* Header */}
-          <div className="flex items-center gap-2 text-green-600 mb-3">
-            <CgInsights size={18} />
-
-            <h1 className="text-base font-semibold capitalize">Insights</h1>
-          </div>
-
-          {/* Content */}
-          <div className="flex flex-col gap-3 text-sm">
-            {/* Insight 1 */}
-            <div className="flex items-start gap-2 p-2 rounded-md bg-slate-50">
-              <PiInfo className="mt-0.5 text-green-600 shrink-0" />
-              <p className="text-slate-600">
-                You spent{" "}
-                <span className="font-medium text-slate-800">₹6,000</span> on{" "}
-                <span className="font-medium text-slate-800">Shopping</span> —
-                highest this month.
-              </p>
-            </div>
-
-            {/* Insight 2 */}
-            <div className="flex items-start gap-2 p-2 rounded-md bg-slate-50">
-              <PiInfo className="mt-0.5 text-green-600 shrink-0" />
-              <p className="text-slate-600">
-                Your expenses increased by{" "}
-                <span className="font-medium text-red-500">12%</span> compared
-                to last month.
-              </p>
-            </div>
-
-            {/* Insight 3 */}
-            <div className="flex items-start gap-2 p-2 rounded-md bg-slate-50">
-              <PiInfo className="mt-0.5 text-green-600 shrink-0" />
-              <p className="text-slate-600">
-                You have used{" "}
-                <span className="font-medium text-slate-800">70%</span> of your
-                monthly budget.
-              </p>
-            </div>
-          </div>
+        <section className="p-0">
+          <InsightCrad />
         </section>
       </aside>
     </div>

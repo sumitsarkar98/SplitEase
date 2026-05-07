@@ -27,7 +27,6 @@ import RecentIncome from "../ui/cards/RecentIncome.tsx";
 const Dashboard = () => {
   const [period, setPeriod] = useState<PeriodType>("month");
 
-  // call use hooks to fetch data for cards and category breakdown
   const {
     data: OverviewData = [],
     isLoading: cardLoading,
@@ -45,15 +44,19 @@ const Dashboard = () => {
   // safely extract data with fallback to empty array
   const safeOverviewData: OverviewDataType[] = OverviewData || [];
   const safeCategoryData: CategoryDataTypes[] = categoryData || [];
+  console.log("card data:", safeOverviewData);
 
   // separate income and expense data
   const incomeData = safeCategoryData.filter(
     (item) => item.type?.toLowerCase() === "income",
   );
-  console.log("INCOME DATA:", incomeData);
+  // console.log("all DATA:", safeCategoryData);
+  // console.log("INCOME DATA:", incomeData);
+
   const expenseData = safeCategoryData.filter(
     (item) => item.type?.toLowerCase() === "expense",
   );
+  //console.log("expense DATA:", expenseData);
 
   // handle loading states
   if (cardLoading || categoryLoading) {
@@ -97,7 +100,7 @@ const Dashboard = () => {
       {/* ===== SECTION-2 (OVERVIEW CARDS) ===== */}
       <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 md:gap-5 px-1 sm:px-2 md:px-0">
         {safeOverviewData.map((data) => (
-          <OverviewCard key={data.title} data={data} />
+          <OverviewCard key={data.title} data={data} period={period} />
         ))}
       </section>
 
@@ -141,7 +144,7 @@ const Dashboard = () => {
           </div>
 
           {/* BODY */}
-          <div className="h-[250px] flex items-center justify-center">
+          <div className="h-62.5 flex items-center justify-center">
             {incomeData.length === 0 ? (
               <Empty
                 title="No income data yet"
@@ -226,7 +229,7 @@ const Dashboard = () => {
         </div>
       </section>
 
-      {/* ===== SECTION-6 ===== */}
+      {/* ===== SECTION-6 / Recent income ===== */}
       <section className="flex flex-col bg-white rounded-lg border border-slate-200 p-3 sm:p-5 shadow-sm hover:shadow-md transition">
         {/* Header */}
         <div className="mb-3 px-0 lg:px-2 flex flex-col">

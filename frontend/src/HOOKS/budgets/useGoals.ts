@@ -16,7 +16,6 @@ export const useGoals = () => {
     },
   });
 };
-
 // CREATE goal
 export const useCreateGoal = () => {
   const queryClient = useQueryClient();

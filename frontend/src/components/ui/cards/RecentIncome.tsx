@@ -9,6 +9,7 @@ const formatDate = (date: string) => {
     year: "numeric",
   });
 };
+// console.log("date:", formatDate("2023-10-15"));
 
 const RecentIncome = () => {
   const { data = [], isLoading, isError } = useRecentIncome();
@@ -43,16 +44,16 @@ const RecentIncome = () => {
         >
           <div className="flex flex-col">
             <p className="font-semibold text-base text-slate-700">
-              {item.category || "—"}
+              {item.note || "No note"}
             </p>
-            <p className="text-xs text-slate-400">{item.note || "No note"}</p>
+            <p className="text-xs text-slate-400"> {item.category || "—"}</p>
           </div>
 
           <div className="flex flex-col items-end">
             <p className="text-green-600 font-semibold">₹{item.amount ?? 0}</p>
             <p className="text-[11px] text-slate-400 mt-1">
               {item.type?.charAt(0).toUpperCase() + item.type?.slice(1)} •{" "}
-              {formatDate(item.transaction_date)}
+              {formatDate(item.date)}
             </p>
           </div>
         </div>
