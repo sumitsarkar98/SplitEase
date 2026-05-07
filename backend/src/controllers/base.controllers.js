@@ -11,4 +11,32 @@ const getCategories = asyncHandler(async (req, res) => {
     .json(new ApiResponse("categories fetched successfully !", categories));
 });
 
-export { getCategories };
+const getCategoryExpenses = asyncHandler(async (req, res) => {
+  const userId = req.user?.id || 1;
+
+  const [rows] = await pool.query(
+    `SELECT
+  C.id,
+  C.title,
+  T.type,
+  COALESCE(SUM(T.amount), 0) AS total_amount
+FROM splitease.transactions T
+INNER JOIN splitease.categories C
+  ON C.id = T.category_id
+WHERE
+  T.user_id = ?
+  AND T.transaction_date >= DATE_FORMAT(CURDATE(), '%Y-%m-01')
+  AND T.transaction_date < DATE_ADD(DATE_FORMAT(CURDATE(), '%Y-%m-01'), INTERVAL 1 MONTH)
+GROUP BY
+  C.id, C.title, T.type`,
+    [userId],
+  );
+
+  return res
+    .status(200)
+    .json(new ApiResponse("category expenses fetched successfully !", rows));
+});
+
+
+
+export { getCategories, getCategoryExpenses };
