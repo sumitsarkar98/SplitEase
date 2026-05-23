@@ -50,3 +50,11 @@ export type GoalType = {
   status: string;
   targetDate?: string | null;
 };
+
+// user type
+export type User = {
+  avatar?: string | null;
+  id: number;
+  fullname: string;
+  email: string;
+};

@@ -23,8 +23,10 @@ import { PiInfo } from "react-icons/pi";
 import { CgInsights } from "react-icons/cg";
 import { useCategoryData } from "../../HOOKS/dashboard/useCategoryData.ts";
 import RecentIncome from "../ui/cards/RecentIncome.tsx";
+import { useAuth } from "../../context/AuthContext.tsx";
 
 const Dashboard = () => {
+  const { user } = useAuth();
   const [period, setPeriod] = useState<PeriodType>("month");
 
   const {
@@ -82,7 +84,7 @@ const Dashboard = () => {
           <h1 className="text-3xl sm:text-3xl lg:text-3xl font-semibold text-slate-700">
             Welcome back <br className="sm:hidden" />
             <span className="text-green-600 text-4xl font-highlight">
-              Sumit !
+              {user?.fullname?.split(" ")[0] || "User"} !
             </span>
           </h1>
 

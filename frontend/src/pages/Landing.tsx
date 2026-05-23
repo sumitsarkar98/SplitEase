@@ -1,3 +1,4 @@
+import { NavLink } from "react-router-dom";
 import leftCover from "../assets/herocover.webp";
 
 const Landing = () => {
@@ -12,11 +13,11 @@ const Landing = () => {
           fontFamily: "var(--font-body)",
         }}
       >
-        <div className="max-w-7xl mx-auto px-6 lg:px-10 grid grid-cols-1 md:grid-cols-2 gap-14 items-center">
+        <div className="max-w-7xl mx-auto px-6 py-6 lg:px-10 grid grid-cols-1 md:grid-cols-2 gap-14 items-center">
           {/* LEFT */}
           <div className="space-y-6 text-center md:text-left">
             {/* small badge */}
-            <div className="inline-block px-3 py-2 rounded-full text-xs font-medium bg-white shadow-sm">
+            <div className="hidden lg:inline-block px-3 py-2 rounded-full text-xs font-medium bg-white shadow-sm">
               💰 Smart Personal Finance
             </div>
 
@@ -46,7 +47,8 @@ const Landing = () => {
 
             {/* buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start pt-2">
-              <button
+              <NavLink
+                to="/register"
                 className="cursor-pointer px-7 py-3 rounded-lg text-white font-medium shadow-md hover:-translate-y-0.5 transition"
                 style={{
                   backgroundColor: "var(--base-color)",
@@ -54,7 +56,7 @@ const Landing = () => {
                 }}
               >
                 Get Started Free
-              </button>
+              </NavLink>
 
               <button
                 className="cursor-pointer px-7 py-3 rounded-lg border hover:bg-white transition"
@@ -70,9 +72,9 @@ const Landing = () => {
 
             {/* trust text */}
             <p className="text-xs text-slate-500 pt-2">
-              Free to start
+              Easy to start
               <span className="text-slate-500 mx-2">•</span>
-              No credit card required
+              Free to Use
               <span className="text-slate-500 mx-2">•</span>
               Cancel anytime
             </p>
@@ -250,26 +252,28 @@ const Landing = () => {
             Start Managing Your Money Today
           </h2>
 
-          <p className="text-slate-500 mt-4 max-w-xl mx-auto">
-            Join thousands of users who already track their finances smarter
+          <p className="text-slate-500 mt-4 max-w-xl mx-auto font-light">
+            Join with friends who already track their finances <br /> smarter
             with SplitEase.
           </p>
 
           {/* button */}
           <div className="mt-8">
-            <button
-              className="cursor-pointer px-8 py-3 rounded-lg text-white font-medium shadow-md hover:-translate-y-0.5 transition"
+            <NavLink
+              to="/register"
+              className="cursor-pointer px-8 py-3 rounded-lg text-white font-medium shadow-md hover:-translate-y-0.5 transition
+              hover:shadow-lg"
               style={{
                 backgroundColor: "var(--base-color)",
                 fontFamily: "var(--font-highlight)",
               }}
             >
               Create Free Account
-            </button>
+            </NavLink>
           </div>
 
-          <p className="text-xs text-slate-400 mt-3">
-            No credit card required • Free forever plan
+          <p className="text-xs text-slate-400 mt-5">
+            No credit card • Free plans • Cancel anytime
           </p>
         </div>
       </section>

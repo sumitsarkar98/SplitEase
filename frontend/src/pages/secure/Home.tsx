@@ -1,4 +1,4 @@
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { LuLayoutDashboard, LuArrowLeftRight, LuWallet } from "react-icons/lu";
 import { FiLogOut } from "react-icons/fi";
 import { IoIosSettings } from "react-icons/io";
@@ -7,8 +7,15 @@ import { MdOutlineHistory } from "react-icons/md";
 import { PiInfo } from "react-icons/pi";
 import { FaMoneyBillTransfer } from "react-icons/fa6";
 import InsightCrad from "../../components/ui/cards/InsightCrad";
+import { useLogout } from "../../HOOKS/auth/useLogout";
 
 const Home = () => {
+  const { mutate: logoutUser, isPending } = useLogout();
+
+  const handleLogout = () => {
+    logoutUser();
+  };
+
   return (
     <div className="flex h-screen px-1">
       {/* ================= Left Sidebar ================= */}
@@ -93,10 +100,12 @@ const Home = () => {
             </NavLink>
 
             <button
-              onClick={() => alert("Logout logic here")}
+              onClick={handleLogout}
+              disabled={isPending}
               className="flex items-center gap-2 p-2 rounded-lg text-red-500 hover:bg-red-50 transition"
             >
-              <FiLogOut /> Logout
+              <FiLogOut />
+              {isPending ? "Logging out..." : "Logout"}
             </button>
           </nav>
         </div>
