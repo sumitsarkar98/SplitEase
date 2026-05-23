@@ -18,18 +18,20 @@ export const useLogin = () => {
   return useMutation({
     mutationFn: loginUser,
 
-    onSuccess: (response) => {
+    onSuccess: async (response) => {
       const user: User = response.data.data.user;
-      console.log("user is :", user);
 
-      // set context user
+      console.log("Logged in user:", user);
+
+      // update auth context
       login(user);
 
-      // success toast
       toast.success("Login successful");
 
-      // redirect
-      navigate("/home/dashboard");
+      // small delay ensures context updates first
+      setTimeout(() => {
+        navigate("/home/dashboard", { replace: true });
+      }, 0);
     },
 
     onError: (error: any) => {

@@ -1,13 +1,10 @@
-// components/layouts/ProtectedRoutes.tsx
-
 import { Navigate, Outlet } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 const ProtectedRoute = () => {
-  // Replace with your real auth logic
-  //   const isAuthenticated = localStorage.getItem("token");
-  const isAuthenticated = true; // For testing, set to true. Replace with real auth check.
+  const { user } = useAuth();
 
-  return isAuthenticated ? <Outlet /> : <Navigate to="/" replace />;
+  return user ? <Outlet /> : <Navigate to="/login" replace />;
 };
 
 export default ProtectedRoute;
