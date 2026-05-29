@@ -14,7 +14,11 @@ const app = express();
 // CORS Configuration
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin:
+      process.env.NODE_ENV === "production"
+        ? "https://your-frontend.vercel.app"
+        : "http://localhost:5173",
+
     credentials: true,
   }),
 );
@@ -22,18 +26,9 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
-app.use((req, res, next) => {
-  console.log(`[${req.method}] ${req.path}`);
-  next();
-});
-
-// basic routes
+// Routes
 app.use("/api/v1/base", baseRoutes);
-
-// auth Routes
 app.use("/api/v1/auth", userRoutes);
-
-// Protected Featured Routes
 app.use("/api/v1/dashboard", dashboardRoutes);
 app.use("/api/v1/transactions", transactionRoutes);
 app.use("/api/v1/budgets", budgetRoutes);
