@@ -46,7 +46,7 @@ const Dashboard = () => {
   // safely extract data with fallback to empty array
   const safeOverviewData: OverviewDataType[] = OverviewData || [];
   const safeCategoryData: CategoryDataTypes[] = categoryData || [];
-  console.log("card data:", safeOverviewData);
+  // console.log("card data:", safeOverviewData);
 
   // separate income and expense data
   const incomeData = safeCategoryData.filter(

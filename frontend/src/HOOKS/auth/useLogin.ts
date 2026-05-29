@@ -21,8 +21,6 @@ export const useLogin = () => {
     onSuccess: async (response) => {
       const user: User = response.data.data.user;
 
-      console.log("Logged in user:", user);
-
       // update auth context
       login(user);
 
